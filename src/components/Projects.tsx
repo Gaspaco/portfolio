@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import TextReveal from "./TextReveal";
-import { cn } from "@/lib/utils";
 
 const projects = [
   {
@@ -14,287 +12,251 @@ const projects = [
     category: "Fitness App",
     year: "2025",
     src: "/aria.png",
-    description: "A revolutionary approach to personal fitness tracking.",
-    link: "https://aria-health.netlify.app/",
-    imgClass: "opacity-80 grayscale-0",
-    technologies: ["React Native", "Supabase", "Reanimated"]
+    link: "/case/aria",
+    bg: "#4a90d9",
   },
   {
     title: "Melograph",
     category: "Creative Studio",
-    year: "2024",
+    year: "2026",
     src: "/image copy 2.png",
-    description: "High-performance digital experiences and motion design.",
-    link: "https://melographstudio.online/",
-    technologies: ["Next.js", "GSAP", "Sass", "Neon"]
+    link: "/case/melograph",
+    bg: "#8c1921",
   },
   {
     title: "Museum",
     category: "Web Design",
     year: "2025",
     src: "/museum.png",
-    description: "A digital archive of modern art and culture.",
-    link: "https://museuum.netlify.app/",
-    imgClass: "opacity-80 grayscale-0",
-    technologies: ["React", "GSAP", "Locomotive Scroll", "WebGL"]
-  }
+    link: "/case/museum",
+    bg: "#c9a84c",
+  },
 ];
 
 export default function Projects() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const floatWrapRef = useRef<HTMLDivElement>(null);
+  const floatBounceRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const prevIndex = useRef<number | null>(null);
+  const isHovering = useRef(false);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    
+
     const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>(".project-card");
-      
-      ScrollTrigger.matchMedia({
-        // Desktop only animations (min-width: 1024px AND mouse device)
-        "(min-width: 1024px) and (hover: hover)": function() {
-            cards.forEach((card, i) => {
-                const nextCard = cards[i + 1];
-                const cardInner = card.querySelector(".card-inner");
-                const innerContent = card.querySelector(".inner-content");
-                const bgImage = card.querySelector(".bg-image");
-                const overlay = card.querySelector(".stack-overlay");
-
-                if (!nextCard || !cardInner) return;
-
-                // 2. Stacking Animation (Exit)
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: nextCard,
-                        start: "top bottom",
-                        end: "top top",
-                        scrub: true,
-                    }
-                });
-
-                tl.to(cardInner, {
-                    scale: 0.98, // Reduced scaling for better performance
-                    transformOrigin: "center top",
-                    ease: "linear",
-                    force3D: true,
-                }, 0)
-                .to(bgImage, {
-                    scale: 1.05, // Reduced parallax scale
-                    ease: "linear",
-                    force3D: true,
-                }, 0)
-                .to(innerContent, {
-                    opacity: 0,
-                    y: -50, // Reduced movement
-                    ease: "linear",
-                    force3D: true,
-                }, 0)
-                .to(overlay, {
-                    opacity: 0.8,
-                    ease: "linear",
-                }, 0);
-            });
-        },
-        
-        // All devices: Entry animations
-        "all": function() {
-             cards.forEach((card) => {
-                // 1. Entry Animation (Text Reveal - Masked)
-                gsap.fromTo(card.querySelectorAll(".reveal-text"), 
-                  { y: "100%" },
-                  {
-                    y: "0%",
-                    duration: 1.5,
-                    stagger: 0.1,
-                    ease: "power4.out",
-                    force3D: true, // Force hardware acceleration
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top bottom-=10%", 
-                        toggleActions: "play none none reverse"
-                    }
-                });
-             });
+      // Header label
+      gsap.fromTo(".header-label",
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out",
+          scrollTrigger: { trigger: ".projects-header-inner", start: "top 85%" }
         }
+      );
+
+      // Header title — each word masked reveal
+      gsap.fromTo(".header-word",
+        { y: "110%" },
+        { y: "0%", duration: 1, stagger: 0.1, ease: "power4.out",
+          scrollTrigger: { trigger: ".projects-header-inner", start: "top 85%" }
+        }
+      );
+
+      // More work link
+      gsap.fromTo(".more-work-link",
+        { x: 20, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.7, ease: "power3.out",
+          scrollTrigger: { trigger: ".projects-header-inner", start: "top 80%" }
+        }
+      );
+
+      // Row stripes draw in one by one
+      gsap.utils.toArray<HTMLElement>(".row-stripe").forEach((stripe, i) => {
+        gsap.fromTo(stripe,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 1, ease: "power4.inOut", transformOrigin: "left",
+            scrollTrigger: { trigger: stripe, start: "top 90%" }
+          }
+        );
       });
 
+      // Row titles — masked slide up
+      gsap.utils.toArray<HTMLElement>(".row-title").forEach((title) => {
+        gsap.fromTo(title,
+          { y: "100%" },
+          { y: "0%", duration: 0.9, ease: "power4.out",
+            scrollTrigger: { trigger: title, start: "top 92%" }
+          }
+        );
+      });
+
+      // Row meta — fade in
+      gsap.utils.toArray<HTMLElement>(".row-meta").forEach((meta) => {
+        gsap.fromTo(meta,
+          { opacity: 0, x: 10 },
+          { opacity: 1, x: 0, duration: 0.6, ease: "power3.out",
+            scrollTrigger: { trigger: meta, start: "top 90%" }
+          }
+        );
+      });
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
+  // Cursor follower with spring/bounce physics
+  useEffect(() => {
+    const wrap = floatWrapRef.current;
+    const bounce = floatBounceRef.current;
+    if (!wrap || !bounce) return;
+
+    // Start all slides off-screen
+    gsap.set(bounce.querySelectorAll(".project-slide"), { yPercent: 100 });
+
+    // Position follows cursor directly
+    const xTo = gsap.quickTo(wrap, "left", { duration: 0.4, ease: "power3.out" });
+    const yTo = gsap.quickTo(wrap, "top", { duration: 0.4, ease: "power3.out" });
+
+    // Bounce layer adds spring offset based on velocity
+    let prevX = 0;
+    let prevY = 0;
+    const rotTo = gsap.quickTo(bounce, "rotate", { duration: 0.5, ease: "elastic.out(1, 0.5)" });
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isHovering.current) return;
+      const dx = e.clientX - prevX;
+      prevX = e.clientX;
+      prevY = e.clientY;
+
+      xTo(e.clientX - 240);
+      yTo(e.clientY - 150);
+      rotTo(dx * 0.15);
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    return () => window.removeEventListener("mousemove", onMouseMove);
+  }, []);
+
+  const handleEnter = useCallback((i: number) => {
+    const prev = prevIndex.current;
+    prevIndex.current = i;
+    setActiveIndex(i);
+    isHovering.current = true;
+    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+
+    // Slide animation between images
+    const images = floatBounceRef.current?.querySelectorAll(".project-slide");
+    if (!images) return;
+
+    const direction = prev !== null && i > prev ? 1 : -1;
+
+    images.forEach((img, idx) => {
+      if (idx === i) {
+        gsap.fromTo(img, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.5, ease: "power3.out" });
+      } else if (idx === prev) {
+        gsap.to(img, { yPercent: direction * -100, duration: 0.5, ease: "power3.out" });
+      }
+    });
+  }, []);
+
+  const handleLeave = useCallback(() => {
+    setActiveIndex(null);
+    isHovering.current = false;
+    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
+  }, []);
+
   return (
-    <section ref={containerRef} className="bg-black relative z-30">
-       
-       {/* Header */}
-       <div className="container mx-auto px-4 py-40 text-center relative z-10">
-          <span className="text-[#fbbf24] font-mono text-sm uppercase tracking-[0.5em] mb-6 block">
-            [ Selected Works ]
-          </span>
-          <h2 className="text-5xl md:text-9xl font-black text-white uppercase tracking-tighter leading-[0.8]">
-            Featured <br/> <span className="text-[#8c1921] stroke-white" style={{ WebkitTextStroke: "2px #8c1921" }}>Cases</span>
-          </h2>
-       </div>
+    <section ref={containerRef} className="bg-black relative z-30 py-28 md:py-40">
 
-       {/* Stacked Cards */}
-       <div className="flex flex-col items-center w-full">
+      {/* Floating image — follows cursor with bounce rotation */}
+      <div
+        ref={floatWrapRef}
+        className="hidden md:block fixed w-[480px] h-[300px] pointer-events-none z-[60] overflow-hidden"
+        style={{ opacity: 0, scale: 0.9, top: 0, left: 0 }}
+      >
+        <div ref={floatBounceRef} className="w-full h-full relative rounded-sm overflow-hidden" style={{ transformOrigin: "center center" }}>
           {projects.map((project, i) => (
-            <div 
-              key={i} 
-              className="project-card sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
-              style={{ 
-                zIndex: i + 1, 
-                marginBottom: i === projects.length - 1 ? 0 : "50vh",
-              }}
+            <div
+              key={i}
+              className="project-slide absolute inset-0 w-full h-full"
             >
-               <div className="card-inner group relative w-full h-full bg-[#050505] overflow-hidden border-t border-l border-r border-white/20 shadow-2xl will-change-transform">
-                  
-                  {/* Background Image */}
-                  <div className="absolute inset-0 bg-image bg-[#1a1a1a]">
-                      <Image 
-                        src={project.src} 
-                        alt={project.title} 
-                        fill 
-                        sizes="(max-width: 768px) 100vw, 100vw"
-                        quality={60} // Lower quality for better performance
-                        priority={i < 2} // Load first 2 images immediately
-                        className={cn(
-                            "object-cover opacity-50 grayscale transition-all duration-700 ease-out lg:group-hover:opacity-100 lg:group-hover:grayscale-0 lg:group-hover:scale-105",
-                            // On mobile, show image clearly without hover
-                            "max-lg:opacity-80 max-lg:grayscale-0", 
-                            project.imgClass
-                        )}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/50 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 opacity-80" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="inner-content absolute inset-0 p-6 md:p-12 flex flex-col justify-between z-20">
-                      
-                      {/* Corner Accents */}
-                      <div className="absolute top-8 left-8 w-24 h-24 border-l-4 border-t-4 border-white/30 group-hover:border-[#fbbf24] transition-colors duration-500 reveal-text" />
-                      <div className="absolute top-8 right-8 w-24 h-24 border-r-4 border-t-4 border-white/30 group-hover:border-[#fbbf24] transition-colors duration-500 reveal-text" />
-                      <div className="absolute bottom-8 left-8 w-24 h-24 border-l-4 border-b-4 border-white/30 group-hover:border-[#fbbf24] transition-colors duration-500 reveal-text" />
-                      <div className="absolute bottom-8 right-8 w-24 h-24 border-r-4 border-b-4 border-white/30 group-hover:border-[#fbbf24] transition-colors duration-500 reveal-text" />
-
-                      {/* Top Bar */}
-                      <div className="flex justify-between items-start reveal-text w-full z-30">
-                          <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-3 bg-black/60 md:bg-white/5 px-4 py-2 md:backdrop-blur-md border border-white/10">
-                                <span className="w-2 h-2 bg-[#fbbf24] animate-pulse" />
-                                <span className="text-[#fbbf24] font-mono text-sm uppercase tracking-widest">
-                                    CASE_0{i + 1}
-                                </span>
-                              </div>
-                              <span className="text-white/60 font-mono text-xs uppercase tracking-widest pl-2">
-                                  // {project.year} — {project.category}
-                              </span>
-                          </div>
-                          
-                          <div className="hidden md:flex flex-col items-end gap-1 font-mono text-xs text-white/40 uppercase tracking-widest">
-                              <span>COORD: {40 + (i * 5)}°N, {70 - (i * 3)}°W</span>
-                              <span>SEC: {["ALPHA", "BETA", "GAMMA", "DELTA"][i % 4]}</span>
-                          </div>
-                      </div>
-
-                      {/* Center Title */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                          <div className="overflow-hidden">
-                            <h3 className="reveal-text block text-[12vw] md:text-[14vw] font-black text-transparent uppercase tracking-tighter leading-none transition-all duration-700 ease-out group-hover:scale-110" style={{ WebkitTextStroke: "2px rgba(255,255,255,0.2)" }}>
-                                {project.title}
-                            </h3>
-                          </div>
-                          <div className="absolute overflow-hidden">
-                            <h3 className="reveal-text text-[12vw] md:text-[14vw] font-black text-white uppercase tracking-tighter leading-none transition-all duration-700 ease-out opacity-100 lg:opacity-0 lg:group-hover:opacity-100 group-hover:scale-110">
-                                {project.title}
-                            </h3>
-                          </div>
-                      </div>
-
-                          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 reveal-text w-full">
-                              <div className="flex flex-col gap-6 max-w-xl">
-                                  <div className="bg-black/80 md:bg-black/40 md:backdrop-blur-md p-6 border border-white/10 relative group/desc overflow-hidden">
-                                    <p className="text-xl md:text-3xl text-white font-light leading-tight relative z-10">
-                                        {project.description}
-                                    </p>
-                                    <div className="absolute bottom-0 left-0 h-1 w-full bg-[#fbbf24] transform scale-x-0 group-hover/desc:scale-x-100 transition-transform duration-500 origin-left" />
-                                  </div>
-
-                                  {/* Tech Stack - Bottom Left placement for better visibility */}
-                                  {project.technologies && (
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.technologies.map((tech, idx) => (
-                                            <span 
-                                                key={idx} 
-                                                className="px-3 py-1 bg-white/5 hover:bg-[#fbbf24] hover:text-black text-white/60 text-[10px] uppercase font-mono tracking-widest border border-white/10 hover:border-[#fbbf24] transition-all duration-300 cursor-default backdrop-blur-sm"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                    </div>
-                                  )}
-                              </div>
-                          
-                          {project.link ? (
-                            <Link href={project.link} target="_blank" className="group/btn relative cursor-pointer overflow-hidden border border-white/20 bg-black/20 px-8 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[#fbbf24]">
-                                {/* Sliding Background */}
-                                <div className="absolute inset-0 translate-y-full bg-[#fbbf24] transition-transform duration-300 ease-out group-hover/btn:translate-y-0" />
-                                
-                                <div className="relative z-10 flex items-center gap-4">
-                                    <span className="font-mono text-sm uppercase tracking-widest text-white transition-colors duration-300 group-hover/btn:text-black">
-                                        Visit Live Site
-                                    </span>
-                                    {/* Arrow Animation */}
-                                    <div className="relative h-4 w-4 overflow-hidden">
-                                        <div className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/btn:-translate-y-full group-hover/btn:translate-x-full">
-                                            <svg className="h-4 w-4 text-white transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                        </div>
-                                        <div className="absolute inset-0 flex -translate-x-full translate-y-full items-center justify-center transition-transform duration-300 group-hover/btn:translate-x-0 group-hover/btn:translate-y-0">
-                                            <svg className="h-4 w-4 text-black transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
-                          ) : (
-                            <div className="group/btn relative cursor-pointer overflow-hidden border border-white/20 bg-black/20 px-8 py-4 backdrop-blur-sm transition-all duration-300 hover:border-[#fbbf24]">
-                                {/* Sliding Background */}
-                                <div className="absolute inset-0 translate-y-full bg-[#fbbf24] transition-transform duration-300 ease-out group-hover/btn:translate-y-0" />
-                                
-                                <div className="relative z-10 flex items-center gap-4">
-                                    <span className="font-mono text-sm uppercase tracking-widest text-white transition-colors duration-300 group-hover/btn:text-black">
-                                        Explore Case
-                                    </span>
-                                    {/* Arrow Animation */}
-                                    <div className="relative h-4 w-4 overflow-hidden">
-                                        <div className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/btn:-translate-y-full group-hover/btn:translate-x-full">
-                                            <svg className="h-4 w-4 text-white transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                        </div>
-                                        <div className="absolute inset-0 flex -translate-x-full translate-y-full items-center justify-center transition-transform duration-300 group-hover/btn:translate-x-0 group-hover/btn:translate-y-0">
-                                            <svg className="h-4 w-4 text-black transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          )}
-                      </div>
-                  </div>
-
-                  {/* Stacking Overlay (Performance optimized dimming) */}
-                  <div className="stack-overlay absolute inset-0 bg-black opacity-0 z-40 pointer-events-none transition-opacity duration-300" />
-
-               </div>
+              <Image
+                src={project.src}
+                alt={project.title}
+                fill
+                className="object-cover"
+                sizes="480px"
+              />
             </div>
           ))}
-       </div>
+        </div>
+      </div>
 
-       {/* Footer / More */}
-       <div className="h-[50vh] flex items-center justify-center bg-black relative z-50">
-          <Link href="/archive" className="group relative inline-flex items-center gap-4 px-12 py-6 border border-white/20 hover:border-[#fbbf24] transition-colors duration-300">
-             <span className="text-white text-lg font-mono uppercase tracking-widest group-hover:text-[#fbbf24] transition-colors">View All Projects</span>
-             <span className="w-3 h-3 bg-[#fbbf24] animate-pulse" />
+      {/* Header */}
+      <div className="projects-header-inner px-6 md:px-12 mb-20 md:mb-28">
+        <div className="flex items-end justify-between">
+          <div>
+            <span className="header-label text-[#fbbf24] font-mono text-xs uppercase tracking-[0.4em] mb-4 block">
+              [ Selected Works ]
+            </span>
+            <h2 className="text-5xl md:text-[8vw] font-black text-white uppercase tracking-tighter leading-none pt-2">
+              <div className="overflow-hidden"><span className="header-word inline-block">Recent</span></div>
+              <div className="overflow-hidden"><span className="header-word inline-block">Work</span></div>
+            </h2>
+          </div>
+          <Link href="/archive" className="more-work-link hidden md:flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-white/30 hover:text-[#fbbf24] transition-colors duration-300 pb-2">
+            <span>More work</span>
+            <svg className="w-3 h-3 -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </Link>
-       </div>
+        </div>
+      </div>
 
+      {/* Project List */}
+      <div className="project-list px-6 md:px-12">
+        {projects.map((project, i) => (
+          <div key={i}>
+            {/* Stripe line */}
+            <div className="row-stripe w-full h-[1px] bg-white/20" />
+
+            {/* Row */}
+            <Link
+              href={project.link}
+              className="group flex items-center justify-between py-10 md:py-14 md:cursor-none relative"
+              onMouseEnter={() => handleEnter(i)}
+              onMouseLeave={handleLeave}
+            >
+              <div className="overflow-hidden">
+                <h3 className="row-title text-4xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter leading-none group-hover:translate-y-[-3px] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]">
+                  {project.title}
+                </h3>
+              </div>
+
+              <div className="row-meta flex items-center gap-6 md:gap-10">
+                <span className="hidden md:block text-sm font-light text-white/40 group-hover:text-white/70 transition-colors duration-300">
+                  {project.category}
+                </span>
+                <span className="hidden md:block text-sm text-white/20 group-hover:text-white/40 transition-colors duration-300">
+                  {project.year}
+                </span>
+              </div>
+            </Link>
+          </div>
+        ))}
+        {/* Final stripe */}
+        <div className="row-stripe w-full h-[1px] bg-white/20" />
+      </div>
+
+      {/* View All */}
+      <div className="px-6 md:px-12 mt-16 md:mt-24 flex justify-center">
+        <Link href="/archive" className="group relative inline-flex items-center gap-4 px-12 py-6 border border-white/20 hover:border-[#fbbf24] transition-colors duration-300 overflow-hidden">
+          <div className="absolute inset-0 bg-[#fbbf24] translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+          <span className="relative z-10 text-white text-lg font-mono uppercase tracking-widest group-hover:text-black transition-colors duration-300">View All Projects</span>
+          <svg className="relative z-10 w-4 h-4 -rotate-45 text-[#fbbf24] group-hover:text-black transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
+      </div>
     </section>
   );
 }
