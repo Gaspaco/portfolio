@@ -11,24 +11,13 @@ import ScrambleText from "./ScrambleText";
 export default function About() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
+  const glitchIntervals = useRef<Map<HTMLElement, ReturnType<typeof setInterval>>>(new Map());
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     
     const ctx = gsap.context(() => {
       
-      // 0. AMBIENT BACKGROUND GLOW (Smoother)
-      gsap.to(".chaos-blob", {
-        x: "random(-50, 50, 5)",
-        y: "random(-50, 50, 5)",
-        scale: "random(0.9, 1.2)",
-        rotation: "random(-20, 20)",
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 2
-      });
 
       // 1. HERO: ELASTIC EXPLOSION
       const words = gsap.utils.toArray(".hero-word", containerRef.current);
@@ -96,21 +85,18 @@ export default function About() {
         }
       );
 
-      // REMOVED OLD OVERLAY ANIMATION TO AVOID CONFLICT
-      /* 
-      gsap.fromTo(".persona-img-overlay", 
-        { scaleY: 1 },
-        { 
-            scaleY: 0, 
-            duration: 1.5, 
-            ease: "power4.inOut",
-            scrollTrigger: {
-                trigger: ".persona-section",
-                start: "top 70%"
-            }
+      // Persona image reveal
+      gsap.fromTo(".persona-img-container",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ".persona-section", start: "top 70%" }
         }
       );
-      */
+
 
       // 4. PERSONA TEXT: STAGGERED FADE UP (REMOVED)
       /*
@@ -139,10 +125,16 @@ export default function About() {
   const triggerGlitch = (e: React.MouseEvent<HTMLElement>) => {
       const target = e.target as HTMLElement;
       const originalText = target.dataset.text || target.innerText;
-      target.dataset.text = originalText; // Store original
-      
+      target.dataset.text = originalText;
+
+      const existing = glitchIntervals.current.get(target);
+      if (existing) {
+          clearInterval(existing);
+          target.innerText = originalText;
+      }
+
       const chars = "!<>-_\/[]{}—=+*^?#________";
-      
+
       let iterations = 0;
       const interval = setInterval(() => {
         target.innerText = originalText
@@ -152,13 +144,16 @@ export default function About() {
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join("");
-        
+
         if (iterations >= originalText.length) {
             clearInterval(interval);
-            target.innerText = originalText; // Ensure clean finish
+            glitchIntervals.current.delete(target);
+            target.innerText = originalText;
         }
         iterations += 1 / 2;
       }, 30);
+
+      glitchIntervals.current.set(target, interval);
   };
 
   return (
@@ -167,9 +162,8 @@ export default function About() {
       {/* Background Wrapper - Handles Overflow for Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <GrainOverlay />
-          <div className="chaos-blob absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#ff4d4d]/10 rounded-full blur-[120px] mix-blend-screen" />
-          <div className="chaos-blob absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#fbbf24]/5 rounded-full blur-[120px] mix-blend-screen" />
-          <div className="chaos-blob absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-black/10 rounded-full blur-[100px] mix-blend-overlay" />
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#ff4d4d]/10 rounded-full blur-[80px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#fbbf24]/5 rounded-full blur-[80px]" />
       </div>
       
       {/* --- PART 1: THE MANIFESTO --- */}
@@ -257,7 +251,7 @@ export default function About() {
                         fill
                         sizes="(max-width: 768px) 70vw, 30vw"
                         loading="lazy"
-                        className="object-cover group-hover:scale-110 transition-all duration-700" 
+                        className="object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                 </div>
             </div>
@@ -269,13 +263,13 @@ export default function About() {
                     <span className="font-mono text-sm tracking-widest uppercase border-b border-white pb-2 w-max mx-auto md:mx-0">02 Code</span>
                 </div>
                 <div className="w-[80vw] md:w-[40vw] aspect-video relative overflow-hidden group">
-                    <Image 
-                        src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" 
-                        alt="Code" 
+                    <Image
+                        src="/precission.jpg"
+                        alt="Precision"
                         fill
                         sizes="(max-width: 768px) 80vw, 40vw"
                         loading="lazy"
-                        className="object-cover group-hover:scale-110 transition-all duration-700" 
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                 </div>
             </div>
@@ -293,7 +287,7 @@ export default function About() {
                         fill
                         sizes="(max-width: 768px) 70vw, 30vw"
                         loading="lazy"
-                        className="impact-img object-cover group-hover:scale-110 transition-all duration-700" 
+                        className="impact-img object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                 </div>
             </div>
@@ -302,19 +296,27 @@ export default function About() {
       </div>
 
       {/* --- PART 3: THE PERSONA --- */}
-      <div className="persona-section min-h-screen py-40 px-4 md:px-20 flex flex-col md:flex-row gap-20 items-center bg-[#8c1921] relative z-10">
+      <div className="persona-section py-24 md:py-32 px-4 md:px-20 flex flex-col md:flex-row gap-20 items-start bg-[#8c1921] relative z-10">
         
-        {/* Image with Curtain Reveal */}
+        {/* Image */}
         <div className="w-full md:w-1/2 relative">
-            <div className="persona-img-container relative w-full aspect-[3/4] overflow-hidden">
-                <Image 
-                    src="/Niko.png" 
-                    alt="Portrait" 
-                    fill 
-                    className="persona-img object-cover contrast-110 transition-all duration-700"
+            <div className="persona-img-container group relative w-full aspect-[3/4] overflow-hidden">
+                <Image
+                    src="/Niko.png"
+                    alt="Portrait"
+                    fill
+                    className="persona-img object-cover object-top contrast-110 scale-110 transition-transform duration-700 group-hover:scale-100"
                 />
+                {/* Red duotone overlay — fades on hover */}
+                <div className="absolute inset-0 bg-[#8c1921]/40 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-700" />
+                {/* Grain */}
+                <div className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
+                />
+                {/* Bottom gradient */}
+                <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
             </div>
-            {/* Decorative Elements */}
+            {/* Decorative circle */}
             <div className="absolute -bottom-10 -right-10 w-40 h-40 border border-neutral-800 rounded-full animate-spin-slow flex items-center justify-center">
                 <div className="w-2 h-2 bg-[#ff4d4d] rounded-full" />
             </div>
@@ -339,8 +341,8 @@ export default function About() {
                 </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-y-12 mt-4 border-t border-white/20 pt-10">
-                
+            <div className="grid grid-cols-1 gap-y-10 mt-4 border-t border-white/20 pt-10">
+
                 {/* ROW 1: STATS */}
                 <div className="grid grid-cols-2 gap-8">
                     <div className="group">
@@ -358,6 +360,49 @@ export default function About() {
                         <p className="text-xl md:text-2xl font-bold text-white">
                             <ScrambleText text="Make an Impact" trigger={statsVisible} />
                         </p>
+                    </div>
+                </div>
+
+                {/* ROW 2 */}
+                <div className="grid grid-cols-2 gap-8 border-t border-white/20 pt-10">
+                    <div className="group">
+                        <h4 className="text-xs font-mono text-white/60 uppercase tracking-widest mb-2 group-hover:text-[#fbbf24] transition-colors">
+                            [ Focus ]
+                        </h4>
+                        <p className="text-xl md:text-2xl font-bold text-white">
+                            <ScrambleText text="Web & Motion" trigger={statsVisible} />
+                        </p>
+                    </div>
+                    <div className="group">
+                        <h4 className="text-xs font-mono text-white/60 uppercase tracking-widest mb-2 group-hover:text-[#fbbf24] transition-colors">
+                            [ Status ]
+                        </h4>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
+                            <p className="text-xl md:text-2xl font-bold text-white">
+                                <ScrambleText text="Available" trigger={statsVisible} />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ROW 3 — services */}
+                <div className="border-t border-white/20 pt-10">
+                    <h4 className="text-xs font-mono text-white/60 uppercase tracking-widest mb-6">
+                        [ What I Do ]
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                        {[
+                            { label: "Frontend Dev", num: "01" },
+                            { label: "UI / UX Design", num: "02" },
+                            { label: "Motion & Animation", num: "03" },
+                            { label: "Mobile Apps", num: "04" },
+                        ].map((service) => (
+                            <div key={service.num} className="group flex items-center gap-3 py-2">
+                                <span className="text-[9px] font-mono text-[#fbbf24]">{service.num}</span>
+                                <span className="text-xs md:text-sm font-mono uppercase tracking-widest text-white/70 group-hover:text-white transition-colors duration-300">{service.label}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

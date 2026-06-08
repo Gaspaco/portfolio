@@ -12,16 +12,25 @@ import Marquee from "@/components/Marquee";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-  },[])
+    const hasLoaded = sessionStorage.getItem("hasLoaded");
+    if (!hasLoaded) {
+      setIsLoading(true);
+    }
+  }, []);
+
+  const handleLoadComplete = () => {
+    sessionStorage.setItem("hasLoaded", "1");
+    setIsLoading(false);
+  };
 
   return (
     <SmoothScroll>
       <main className="min-h-screen w-full flex flex-col cursor-none">
         <CustomCursor />
-        {isLoading && <LoadingAnimations onComplete={() => setIsLoading(false)} />}
+        {isLoading && <LoadingAnimations onComplete={handleLoadComplete} />}
 
         <Navbar />
         <Hero />

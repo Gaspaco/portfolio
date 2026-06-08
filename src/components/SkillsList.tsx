@@ -3,16 +3,16 @@
 import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 import ScrambleText from "./ScrambleText";
+import { siReact, siTypescript, siThreedotjs, siNodedotjs, siFigma, siGreensock } from "simple-icons";
 
 const SKILLS = [
-  { name: "React / Next.js", category: "Frontend", img: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1000&auto=format&fit=crop" },
-  { name: "TypeScript", category: "Language", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop" },
-  { name: "WebGL / Three.js", category: "Creative", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Node.js / Backend", category: "Server", img: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?q=80&w=1000&auto=format&fit=crop" },
-  { name: "UI / UX Design", category: "Design", img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1000&auto=format&fit=crop" },
-  { name: "Motion / GSAP", category: "Animation", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop" },
+  { name: "React / Next.js", category: "Frontend", icon: siReact,      bg: "#20232a" },
+  { name: "TypeScript",      category: "Language",  icon: siTypescript, bg: "#3178c6" },
+  { name: "WebGL / Three.js",category: "Creative",  icon: siThreedotjs, bg: "#1a1a1a" },
+  { name: "Node.js / Backend",category: "Server",   icon: siNodedotjs,  bg: "#1a1a1a" },
+  { name: "UI / UX Design",  category: "Design",    icon: siFigma,      bg: "#1e1e1e" },
+  { name: "Motion / GSAP",   category: "Animation", icon: siGreensock,  bg: "#0ae448" },
 ];
 
 export default function SkillsList() {
@@ -41,7 +41,7 @@ export default function SkillsList() {
 
     // Entrance Animation
     const ctx = gsap.context(() => {
-        
+
         // Trigger Header Scramble
         ScrollTrigger.create({
             trigger: containerRef.current,
@@ -49,27 +49,51 @@ export default function SkillsList() {
             onEnter: () => setHeaderVisible(true)
         });
 
-        // Line-by-line staggered reveal
-        gsap.fromTo(".skill-item", 
-            { 
-               x: -50,
-               opacity: 0,
-               rotationX: 90,
-               transformOrigin: "bottom center"
-            },
-            {
-                x: 0,
-                opacity: 1,
-                rotationX: 0,
-                duration: 1.2,
-                stagger: 0.1,
-                ease: "expo.out",
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 80%",
-                }
-            }
+        // Header title masked reveal
+        gsap.fromTo(".skills-title-word",
+          { y: "110%" },
+          { y: "0%", duration: 1, ease: "power4.out",
+            scrollTrigger: { trigger: containerRef.current, start: "top 80%" }
+          }
         );
+
+        // Header border draws in
+        gsap.fromTo(".skills-header-line",
+          { scaleX: 0 },
+          { scaleX: 1, duration: 1, ease: "power4.inOut", transformOrigin: "left",
+            scrollTrigger: { trigger: containerRef.current, start: "top 80%" }
+          }
+        );
+
+        // Row borders draw in per element
+        gsap.utils.toArray<HTMLElement>(".skill-border").forEach((el) => {
+          gsap.fromTo(el,
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.8, ease: "power4.inOut", transformOrigin: "left",
+              scrollTrigger: { trigger: el, start: "top 92%" }
+            }
+          );
+        });
+
+        // Skill names — masked slide up
+        gsap.utils.toArray<HTMLElement>(".skill-name").forEach((el) => {
+          gsap.fromTo(el,
+            { y: "100%" },
+            { y: "0%", duration: 0.9, ease: "power4.out",
+              scrollTrigger: { trigger: el, start: "top 94%" }
+            }
+          );
+        });
+
+        // Category labels — fade in from right
+        gsap.utils.toArray<HTMLElement>(".skill-cat").forEach((el) => {
+          gsap.fromTo(el,
+            { opacity: 0, x: 15 },
+            { opacity: 1, x: 0, duration: 0.6, ease: "power3.out",
+              scrollTrigger: { trigger: el, start: "top 92%" }
+            }
+          );
+        });
     }, containerRef);
 
     return () => {
@@ -82,12 +106,12 @@ export default function SkillsList() {
   const triggerGlitch = (e: React.MouseEvent<HTMLElement>) => {
       const target = e.currentTarget.querySelector("h3");
       if (!target) return;
-      
+
       const originalText = target.dataset.text || target.innerText;
       if (!target.dataset.text) target.dataset.text = originalText;
-      
+
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+";
-      
+
       let iterations = 0;
       const interval = setInterval(() => {
         target.innerText = originalText
@@ -97,83 +121,94 @@ export default function SkillsList() {
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join("");
-        
+
         if (iterations >= originalText.length) {
             clearInterval(interval);
             target.innerText = originalText;
         }
-        iterations += 1 / 2; // Speed of decode
+        iterations += 1 / 2;
       }, 30);
   };
 
   return (
-    <section ref={containerRef} className="relative w-full py-20 md:py-40 text-white overflow-hidden md:cursor-none">
-      
+    <section ref={containerRef} className="relative w-full py-20 md:py-40 text-white overflow-hidden md:cursor-none [&:hover~*_.custom-cursor]:!opacity-0"
+      onMouseEnter={() => {
+        document.querySelectorAll('[data-custom-cursor]').forEach(el => (el as HTMLElement).style.opacity = '0');
+      }}
+      onMouseLeave={() => {
+        document.querySelectorAll('[data-custom-cursor]').forEach(el => (el as HTMLElement).style.opacity = '');
+      }}
+    >
+
       {/* Floating Image Cursor (Custom Design) */}
-      <div 
+      <div
         ref={cursorRef}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-0 md:left-0 h-[250px] pointer-events-none z-50 md:-translate-x-1/2 md:-translate-y-1/2 flex items-stretch shadow-[0_0_50px_rgba(140,25,33,0.5)]"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:top-0 md:left-0 h-[180px] pointer-events-none z-[9999] md:-translate-x-1/2 md:-translate-y-1/2 flex items-stretch"
         style={{ opacity: activeSkill !== null ? 1 : 0, transition: "opacity 0.3s ease-out" }}
       >
-        {/* Left Red Bar with Lines */}
-        <div className="w-12 bg-[#8c1921] flex flex-col justify-center gap-3 px-2 border-r border-[#fbbf24]/50 relative overflow-hidden">
-            <div className="absolute inset-0 bg-black/10" />
-            {[...Array(8)].map((_, i) => (
-                <div key={i} className="w-full h-[1px] bg-white/60" />
-            ))}
-        </div>
-
-        {/* Image Container */}
-        <div className="relative w-[350px] bg-black border-t border-b border-r border-[#fbbf24]/30">
+        {/* Icon Container */}
+        <div className="relative w-[250px]">
             {SKILLS.map((skill, i) => (
-                <div 
+                <div
                     key={i}
-                    className="absolute inset-0 w-full h-full overflow-hidden"
-                    style={{ 
+                    className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center"
+                    style={{
                         opacity: activeSkill === i ? 1 : 0,
                         zIndex: activeSkill === i ? 10 : 1,
-                        transition: `opacity ${activeSkill === i ? "0s" : "0.4s"} ease-out`
                     }}
                 >
-                    <Image 
-                        src={skill.img} 
-                        alt={skill.name} 
-                        fill 
-                        className="object-cover grayscale contrast-125 transition-transform duration-500 ease-out"
-                        style={{ transform: activeSkill === i ? "scale(1)" : "scale(1.2)" }}
-                    />
-                    {/* Overlay Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#8c1921]/50 to-transparent mix-blend-overlay" />
+                    <svg
+                        role="img"
+                        viewBox="0 0 24 24"
+                        className="w-24 h-24"
+                        fill={skill.icon.hex === "000000" ? "#ffffff" : `#${skill.icon.hex}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path d={skill.icon.path} />
+                    </svg>
                 </div>
             ))}
         </div>
       </div>
 
       <div className="px-6 md:px-20">
-        <h2 className="text-xs font-mono text-[#fbbf24] uppercase tracking-widest mb-12 border-b border-white/20 pb-4">
+        <div className="mb-12 pb-6">
+          <span className="text-sm md:text-base font-mono text-[#fbbf24] uppercase tracking-widest block mb-4">
             <ScrambleText text="[ Technical Arsenal ]" trigger={headerVisible} className="inline-block" />
-        </h2>
+          </span>
+          <div className="overflow-hidden">
+            <h2 className="skills-title-word text-5xl md:text-[7.5vw] font-black text-white uppercase tracking-tighter leading-[0.8]">
+              Skills
+            </h2>
+          </div>
+          <div className="skills-header-line w-full h-[1px] bg-white/20 mt-6 origin-left" />
+        </div>
 
         <div className="flex flex-col">
             {SKILLS.map((skill, i) => (
-                <div 
-                    key={i}
-                    className="skill-item group relative flex items-center justify-between py-6 md:py-12 border-b border-white/20 transition-all duration-300 hover:bg-black z-20 cursor-pointer md:cursor-none"
-                    onMouseEnter={(e) => {
-                        setActiveSkill(i);
-                        triggerGlitch(e);
-                    }}
-                    onMouseLeave={() => setActiveSkill(null)}
-                    onClick={() => setActiveSkill(activeSkill === i ? null : i)}
-                >
-                    <h3 className={`text-2xl md:text-7xl font-black uppercase tracking-tighter transition-colors duration-300 ${activeSkill === i ? 'text-[#fbbf24]' : 'text-white group-hover:text-[#fbbf24]'}`}>
-                        {skill.name}
-                    </h3>
-                    <span className={`text-xs md:text-sm font-mono uppercase tracking-widest transition-colors whitespace-nowrap ml-4 ${activeSkill === i ? 'text-[#fbbf24]' : 'text-white/90 md:text-white/60 group-hover:text-[#fbbf24]'}`}>
-                        {skill.category}
-                    </span>
+                <div key={i}>
+                    <div className="skill-border w-full h-[1px] bg-white/20 origin-left" />
+                    <div
+                        className="skill-item group relative flex items-center justify-between py-6 md:py-12 px-4 md:px-8 transition-colors duration-300 hover:bg-black z-20 cursor-pointer md:cursor-none"
+                        onMouseEnter={(e) => {
+                            setActiveSkill(i);
+                            triggerGlitch(e);
+                        }}
+                        onMouseLeave={() => setActiveSkill(null)}
+                        onClick={() => setActiveSkill(activeSkill === i ? null : i)}
+                    >
+                        <div className="overflow-hidden">
+                          <h3 className={`skill-name text-2xl md:text-7xl font-black uppercase tracking-tighter transition-colors duration-300 ${activeSkill === i ? 'text-[#fbbf24]' : 'text-white group-hover:text-[#fbbf24]'}`}>
+                              {skill.name}
+                          </h3>
+                        </div>
+                        <span className={`skill-cat text-xs md:text-sm font-mono uppercase tracking-widest transition-colors whitespace-nowrap ml-4 ${activeSkill === i ? 'text-[#fbbf24]' : 'text-white/90 md:text-white/60 group-hover:text-[#fbbf24]'}`}>
+                            {skill.category}
+                        </span>
+                    </div>
                 </div>
             ))}
+            <div className="skill-border w-full h-[1px] bg-white/20 origin-left" />
         </div>
       </div>
     </section>

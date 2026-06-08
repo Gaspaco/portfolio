@@ -126,9 +126,9 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
             <div className="flex-1 border-r border-white/20 p-6 md:p-8 flex flex-col justify-between hover:bg-black/20 transition-colors">
                 <span className="font-mono text-xs text-white/50 uppercase tracking-widest menu-text">Socials</span>
                 <div className="flex gap-4 mt-4 menu-text">
-                    <a href="https://www.instagram.com/nik0d_/" target="_blank" className="text-lg font-bold hover:text-[#fbbf24] transition-colors">Instagram</a>
+                    <a href="https://www.instagram.com/nik0d_/" target="_blank" rel="noopener noreferrer" className="text-lg font-bold hover:text-[#fbbf24] transition-colors">Instagram</a>
                     <a href="#" className="text-lg font-bold hover:text-[#fbbf24] transition-colors">Twitter</a>
-                    <a href="https://www.linkedin.com/in/niko-dima-64246b33a/" target="_blank" className="text-lg font-bold hover:text-[#fbbf24] transition-colors">LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/niko-dima-64246b33a/" target="_blank" rel="noopener noreferrer" className="text-lg font-bold hover:text-[#fbbf24] transition-colors">LinkedIn</a>
                 </div>
             </div>
             <div className="flex-1 p-6 md:p-8 flex flex-col justify-between hover:bg-black/20 transition-colors">
