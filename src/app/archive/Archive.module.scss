@@ -1,0 +1,415 @@
+@use '../../styles/mixins' as *;
+
+// ─── Main Container ───
+.container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--c-brand);
+  color: var(--c-white);
+  cursor: none;
+}
+
+// ─── Curtains ───
+.curtain1 {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-curtain-1);
+  background-color: var(--c-dark-1);
+  pointer-events: none;
+}
+
+.curtain2 {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-curtain-2);
+  background-color: var(--c-brand);
+  pointer-events: none;
+}
+
+// ─── Grain Overlay ───
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-base);
+  opacity: 0.04;
+}
+
+// ─── Floating Image ───
+.floatWrap {
+  display: none;
+  position: fixed;
+  width: 480px;
+  height: 300px;
+  pointer-events: none;
+  z-index: var(--z-float);
+  overflow: hidden;
+
+  @include md {
+    display: block;
+  }
+}
+
+.floatBounce {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+// GSAP global target — do NOT modularize
+:global(.archive-slide) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// ─── Header Section ───
+.headerSection {
+  position: relative;
+  z-index: var(--z-content);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 9rem;
+  padding-bottom: 0;
+
+  @include md {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+// GSAP global target
+:global(.archive-meta) {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background-color: var(--c-accent);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.label {
+  @include text-label;
+  color: var(--c-accent);
+}
+
+.count {
+  @include font-mono;
+  font-size: 0.5625rem; // 9px
+  color: rgba(255, 255, 255, 0.3);
+  margin-left: auto;
+}
+
+.titleOverflow {
+  overflow: hidden;
+}
+
+// GSAP global target
+:global(.archive-title) {
+  font-size: 14vw;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+  color: var(--c-white);
+
+  @media (min-width: 768px) {
+    font-size: 10vw;
+  }
+}
+
+// GSAP global target
+:global(.header-line) {
+  height: 1px;
+  background-color: rgba(251, 191, 36, 0.4); // accent/40
+  margin-top: 2.5rem;
+  transform-origin: left;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+
+  @media (min-width: 768px) {
+    margin-left: -3rem;
+    margin-right: -3rem;
+  }
+}
+
+// ─── Project List Section ───
+.projectList {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+// GSAP global target — uses `group` hover pattern
+:global(.project-row) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem 2rem;
+  min-height: 18vw;
+  overflow: hidden;
+  cursor: none;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.2); // accent/20
+  text-decoration: none;
+
+  @media (min-width: 768px) {
+    padding: 1rem 3rem 2.75rem;
+    min-height: 11vw;
+  }
+}
+
+// ─── Gold Fill Wipe ───
+.goldFill {
+  position: absolute;
+  inset: 0;
+  top: -0.25rem;
+  bottom: -0.25rem;
+  background-color: var(--c-accent);
+  transform: translateY(100%);
+  transition: transform 500ms ease-out;
+
+  :global(.project-row):hover & {
+    transform: translateY(0);
+  }
+}
+
+// ─── Index ───
+.index {
+  position: relative;
+  display: none;
+  width: 4rem;
+  flex-shrink: 0;
+  @include font-mono;
+  font-size: 0.875rem;
+  color: var(--c-accent);
+  @include transition(color, var(--duration-base));
+  font-variant-numeric: tabular-nums;
+  align-self: flex-end;
+  padding-bottom: 0.25rem;
+
+  @include md {
+    display: block;
+  }
+
+  :global(.project-row):hover & {
+    color: var(--c-black);
+  }
+}
+
+// ─── Title Wrapper ───
+.titleWrapper {
+  position: relative;
+  flex: 1;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
+  @include md {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+.outlineWrap {
+  overflow: hidden;
+}
+
+// GSAP global target — outline title
+:global(.archive-row-title).outlineTitle {
+  display: block;
+  font-size: 10vw;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  transition: transform 700ms ease-out;
+  transform-origin: left;
+
+  @media (min-width: 768px) {
+    font-size: 7vw;
+  }
+
+  :global(.project-row):hover & {
+    transform: scale(1.05);
+  }
+}
+
+// ─── Solid Layer ───
+.solidOverlay {
+  position: absolute;
+  inset: 0;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  overflow: hidden;
+
+  @include md {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+// GSAP global target — solid title
+:global(.archive-row-title).solidTitle {
+  display: block;
+  font-size: 10vw;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--c-white);
+  transition: color 700ms ease-out, transform 700ms ease-out;
+  transform-origin: left;
+  opacity: 1;
+
+  @media (min-width: 768px) {
+    font-size: 7vw;
+  }
+
+  @include lg {
+    opacity: 0;
+  }
+
+  :global(.project-row):hover & {
+    color: var(--c-black);
+    transform: scale(1.05);
+  }
+
+  @include lg {
+    :global(.project-row):hover & {
+      opacity: 1;
+    }
+  }
+}
+
+// ─── Category Wrapper ───
+.categoryWrapper {
+  position: relative;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  margin-left: 2rem;
+  align-self: flex-end;
+  padding-bottom: 0.25rem;
+
+  @include md {
+    display: flex;
+  }
+}
+
+.category {
+  @include font-mono;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.6);
+  @include transition(color, var(--duration-base));
+
+  :global(.project-row):hover & {
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.year {
+  @include font-mono;
+  font-size: 0.75rem;
+  color: var(--c-accent);
+  @include transition(color, var(--duration-base));
+
+  :global(.project-row):hover & {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+// ─── Arrow ───
+.arrowWrapper {
+  position: relative;
+  margin-left: 1.5rem;
+  flex-shrink: 0;
+  align-self: flex-end;
+  padding-bottom: 0.25rem;
+  @include transition(transform, var(--duration-base));
+
+  @include md {
+    margin-left: 2.5rem;
+  }
+
+  :global(.project-row):hover & {
+    transform: translate(0.25rem, -0.25rem);
+  }
+}
+
+.arrowSvg {
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: rotate(-45deg);
+  color: var(--c-accent);
+  @include transition(color, var(--duration-base));
+
+  :global(.project-row):hover & {
+    color: var(--c-black);
+  }
+}
+
+// ─── Footer ───
+.footer {
+  position: relative;
+  z-index: var(--z-content);
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @include md {
+    padding: 2.5rem 3rem;
+  }
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  @include text-mono-xs;
+  color: rgba(255, 255, 255, 0.6);
+  @include transition(color, var(--duration-base));
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  &:hover {
+    color: var(--c-accent);
+  }
+}
+
+.backArrow {
+  width: 0.75rem;
+  height: 0.75rem;
+  transform: rotate(180deg);
+}
+
+.footerText {
+  @include font-mono;
+  font-size: 0.5625rem; // 9px
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+}

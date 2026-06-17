@@ -1,0 +1,55 @@
+@use 'variables' as v;
+
+// ─── Responsive ───
+@mixin sm  { @media (min-width: v.$bp-sm)  { @content; } }
+@mixin md  { @media (min-width: v.$bp-md)  { @content; } }
+@mixin lg  { @media (min-width: v.$bp-lg)  { @content; } }
+@mixin xl  { @media (min-width: v.$bp-xl)  { @content; } }
+
+// ─── Pointer ───
+@mixin pointer-fine  { @media (pointer: fine)  { @content; } }
+@mixin pointer-coarse { @media (pointer: coarse) { @content; } }
+
+// ─── Typography ───
+@mixin font-sans  { font-family: var(--font-sans); }
+@mixin font-mono  { font-family: var(--font-mono); }
+@mixin font-display { font-family: var(--font-display); }
+@mixin font-serif { font-family: var(--font-serif); }
+
+@mixin text-label {
+  @include font-mono;
+  font-size: 0.5625rem; // 9px
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+}
+
+@mixin text-mono-xs {
+  @include font-mono;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+// ─── Layout ───
+@mixin section-padding {
+  padding-inline: 1.5rem;
+  @include md { padding-inline: 3rem; }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Grain texture ───
+@mixin grain-texture {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+// ─── Transitions ───
+@mixin transition($props: all, $duration: var(--duration-base), $ease: var(--ease-in-out)) {
+  transition-property: #{$props};
+  transition-duration: #{$duration};
+  transition-timing-function: #{$ease};
+}

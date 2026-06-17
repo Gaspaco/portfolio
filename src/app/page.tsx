@@ -1,15 +1,16 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Projects from "@/components/Projects";
-import About from "@/components/About";
-import Footer from "@/components/Footer";
-import LoadingAnimations from "@/components/LoadingAnimations";
-import CustomCursor from "@/components/CustomCursor";
-import SmoothScroll from "@/components/SmoothScroll";
-import Marquee from "@/components/Marquee";
+import Navbar from "@/components/layout/Navbar";
+import Hero from "@/components/sections/Hero";
+import Projects from "@/components/sections/Projects";
+import About from "@/components/sections/About";
+import Footer from "@/components/layout/Footer";
+import LoadingAnimations from "@/components/ui/LoadingAnimations";
+import CustomCursor from "@/components/ui/CustomCursor";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import Marquee from "@/components/sections/Marquee";
 import { useEffect, useState } from "react";
+import s from './page.module.scss';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ export default function Home() {
 
   return (
     <SmoothScroll>
-      <main className="min-h-screen w-full flex flex-col cursor-none">
+      <main className={s.main}>
         <CustomCursor />
         {isLoading && <LoadingAnimations onComplete={handleLoadComplete} />}
 

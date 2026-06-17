@@ -1,0 +1,528 @@
+@use '../../styles/mixins' as *;
+
+// ─── Main Section ───
+.section {
+  position: relative;
+  width: 100%;
+  background-color: var(--c-brand);
+  color: var(--c-white);
+
+  &::selection,
+  & ::selection {
+    background-color: var(--c-accent);
+    color: var(--c-brand);
+  }
+}
+
+// ─── Background ───
+.bgWrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob1 {
+  position: absolute;
+  top: 25%;
+  left: 25%;
+  width: 600px;
+  height: 600px;
+  background-color: rgba(255, 77, 77, 0.1);
+  border-radius: 9999px;
+  filter: blur(80px);
+}
+
+.blob2 {
+  position: absolute;
+  bottom: 25%;
+  right: 25%;
+  width: 500px;
+  height: 500px;
+  background-color: rgba(251, 191, 36, 0.05);
+  border-radius: 9999px;
+  filter: blur(80px);
+}
+
+// ─── Part 1: Manifesto ───
+.manifesto {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem 1rem;
+  position: relative;
+  z-index: var(--z-content);
+
+  @include md {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+.manifestoInner {
+  max-width: 95vw;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  @include font-mono;
+  color: var(--accent-secondary);
+  margin-bottom: 2rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  opacity: 0.8;
+
+  @include md {
+    font-size: 0.875rem;
+  }
+}
+
+.lineContainer {
+  line-height: 0.85;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+
+  @include md {
+    column-gap: 2rem;
+  }
+}
+
+.lineContainerSpaced {
+  composes: lineContainer;
+  margin-top: 1rem;
+}
+
+.heroWord {
+  display: inline-block;
+  font-size: 10vw;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--c-white);
+  cursor: none;
+  @include transition(color, var(--duration-base));
+
+  &:hover {
+    color: var(--c-accent);
+  }
+}
+
+.heroWordAccent {
+  composes: heroWord;
+  color: var(--c-accent);
+
+  &:hover {
+    color: var(--c-white);
+  }
+}
+
+.heroWordMuted {
+  composes: heroWord;
+  color: #f5f5f5; // neutral-100
+  cursor: none;
+
+  &:hover {
+    color: #f5f5f5;
+  }
+}
+
+.descriptionBlock {
+  margin-top: 5rem;
+  max-width: 36rem;
+  margin-left: auto;
+  border-left: 1px solid #262626; // neutral-800
+  padding-left: 2rem;
+}
+
+.descriptionText {
+  font-size: 1.25rem;
+  font-weight: 300;
+  line-height: 1.625;
+  color: #a3a3a3; // neutral-400
+
+  @include md {
+    font-size: 1.5rem;
+  }
+}
+
+.remembered {
+  color: var(--c-white);
+  font-weight: 700;
+}
+
+// ─── Part 2: Philosophy (Horizontal Scroll) ───
+.philosophyWrapper {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--c-brand);
+  color: var(--c-white);
+  position: relative;
+  z-index: var(--z-above);
+}
+
+.philosophyTrack {
+  display: flex;
+  flex-direction: row;
+  width: 300vw;
+  height: 100%;
+}
+
+.philosophyItem {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 5rem 1rem;
+  border: none;
+  border-color: rgba(255, 255, 255, 0.1);
+
+  @include md {
+    flex-direction: row;
+    gap: 5rem;
+    padding: 0 5rem;
+  }
+}
+
+.philosophyTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+
+  @include md {
+    text-align: left;
+  }
+}
+
+.philosophyHeading {
+  font-size: 12vw;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1;
+
+  @include md {
+    font-size: 8vw;
+  }
+}
+
+.philosophyHeadingAccent {
+  composes: philosophyHeading;
+  color: var(--c-accent);
+  @include transition(color, var(--duration-slow));
+
+  &:hover {
+    color: var(--c-white);
+  }
+}
+
+.philosophyLabel {
+  @include font-mono;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--c-white);
+  padding-bottom: 0.5rem;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include md {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.philosophyImgWrap {
+  width: 70vw;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  overflow: hidden;
+
+  @include md {
+    width: 30vw;
+  }
+
+  &:hover .philosophyImg {
+    transform: scale(1.1);
+  }
+}
+
+.philosophyImgWrapWide {
+  composes: philosophyImgWrap;
+  width: 80vw;
+  aspect-ratio: 16 / 9;
+
+  @include md {
+    width: 40vw;
+  }
+}
+
+.philosophyImg {
+  object-fit: cover;
+  @include transition(transform, var(--duration-slower));
+}
+
+// ─── Part 3: Persona ───
+.persona {
+  padding: 6rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  align-items: flex-start;
+  background-color: var(--c-brand);
+  position: relative;
+  z-index: var(--z-content);
+
+  @include md {
+    padding: 8rem 5rem;
+    flex-direction: row;
+  }
+}
+
+.personaImageSide {
+  width: 100%;
+  position: relative;
+
+  @include md {
+    width: 50%;
+  }
+}
+
+.personaImgContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+
+  &:hover .personaImg {
+    transform: scale(1);
+  }
+
+  &:hover .redOverlay {
+    opacity: 0;
+  }
+}
+
+.personaImg {
+  object-fit: cover;
+  object-position: top;
+  filter: contrast(1.1);
+  transform: scale(1.1);
+  @include transition(transform, var(--duration-slower));
+}
+
+.redOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(140, 25, 33, 0.4);
+  mix-blend-mode: multiply;
+  @include transition(opacity, var(--duration-slower));
+}
+
+.grainInside {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.bottomGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 33.333%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+}
+
+.decorativeCircle {
+  position: absolute;
+  bottom: -2.5rem;
+  right: -2.5rem;
+  width: 10rem;
+  height: 10rem;
+  border: 1px solid #262626;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spinSlow 20s linear infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--c-accent-red);
+  border-radius: 9999px;
+}
+
+// ─── Persona Content Side ───
+.personaContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+  @include md {
+    width: 50%;
+  }
+}
+
+.personaTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.9;
+  margin-bottom: 1.5rem;
+
+  @include md {
+    font-size: 6rem;
+  }
+}
+
+.goldText {
+  color: var(--c-accent);
+}
+
+.bodyTextWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.625;
+  max-width: 32rem;
+
+  @include md {
+    font-size: 1.25rem;
+  }
+}
+
+// ─── Stats Grid ───
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 2.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 2.5rem;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.statsRowBordered {
+  composes: statsRow;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 2.5rem;
+}
+
+.statGroup {
+  &:hover .statHeader {
+    color: var(--c-accent);
+  }
+}
+
+.statHeader {
+  font-size: 0.75rem;
+  @include font-mono;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  @include transition(color);
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-white);
+
+  @include md {
+    font-size: 1.5rem;
+  }
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--c-accent);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+// ─── Services ───
+.servicesBlock {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 2.5rem;
+}
+
+.servicesHeader {
+  font-size: 0.75rem;
+  @include font-mono;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+}
+
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+
+  &:hover .serviceLabel {
+    color: var(--c-white);
+  }
+}
+
+.serviceNum {
+  font-size: 9px;
+  @include font-mono;
+  color: var(--c-accent);
+}
+
+.serviceLabel {
+  font-size: 0.75rem;
+  @include font-mono;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.7);
+  @include transition(color, var(--duration-base));
+
+  @include md {
+    font-size: 0.875rem;
+  }
+}

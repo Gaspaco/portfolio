@@ -1,0 +1,9 @@
+@use '../styles/mixins' as *;
+
+.main {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: none;
+}

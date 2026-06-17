@@ -6,9 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Navbar from "@/components/Navbar";
-import CustomCursor from "@/components/CustomCursor";
+import Navbar from "@/components/layout/Navbar";
+import CustomCursor from "@/components/ui/CustomCursor";
 import { projects } from "@/lib/projects";
+import s from "./Archive.module.scss";
 
 export default function Archive() {
   const router = useRouter();
@@ -135,13 +136,13 @@ export default function Archive() {
   }, []);
 
   return (
-    <main ref={containerRef} className="min-h-screen w-full flex flex-col bg-[#8c1921] text-white cursor-none">
+    <main ref={containerRef} className={s.container}>
       {/* Curtains */}
-      <div ref={curtainRef} className="fixed inset-0 z-[9999] bg-[#050505] pointer-events-none" />
-      <div ref={curtain2Ref} className="fixed inset-0 z-[9998] bg-[#8c1921] pointer-events-none" />
+      <div ref={curtainRef} className={s.curtain1} />
+      <div ref={curtain2Ref} className={s.curtain2} />
 
       {/* Grain */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.04]"
+      <div className={s.grain}
         style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
       />
 
@@ -153,12 +154,12 @@ export default function Archive() {
       {/* Floating image — spring cursor follow with directional slide */}
       <div
         ref={floatWrapRef}
-        className="hidden md:block fixed w-[480px] h-[300px] pointer-events-none z-[60] overflow-hidden"
+        className={s.floatWrap}
         style={{ opacity: 0, scale: 0.9, top: 0, left: 0 }}
       >
-        <div ref={floatBounceRef} className="w-full h-full relative rounded-sm overflow-hidden" style={{ transformOrigin: "center center" }}>
+        <div ref={floatBounceRef} className={s.floatBounce} style={{ transformOrigin: "center center" }}>
           {projects.map((p, i) => (
-            <div key={i} className="archive-slide absolute inset-0 w-full h-full">
+            <div key={i} className="archive-slide">
               <Image src={p.src} alt={p.title} fill className="object-cover" sizes="480px" />
             </div>
           ))}
@@ -166,72 +167,72 @@ export default function Archive() {
       </div>
 
       {/* Header */}
-      <section className="relative z-10 px-6 md:px-12 pt-36 pb-0">
-        <div className="archive-meta flex items-center gap-3 mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-pulse" />
-          <span className="text-[9px] font-mono uppercase tracking-[0.4em] text-[#fbbf24]">Selected Work</span>
-          <span className="text-[9px] font-mono text-white/30 ml-auto">0{projects.length} Cases</span>
+      <section className={s.headerSection}>
+        <div className="archive-meta">
+          <span className={s.dot} />
+          <span className={s.label}>Selected Work</span>
+          <span className={s.count}>0{projects.length} Cases</span>
         </div>
 
-        <div className="overflow-hidden">
-          <h1 className="archive-title text-[14vw] md:text-[10vw] font-black uppercase tracking-tighter leading-[0.82] text-white">
+        <div className={s.titleOverflow}>
+          <h1 className="archive-title">
             All Projects
           </h1>
         </div>
 
-        <div className="header-line h-[1px] bg-[#fbbf24]/40 mt-10 origin-left -mx-6 md:-mx-12" />
+        <div className="header-line" />
       </section>
 
       {/* Project rows */}
-      <section className="relative z-10 flex flex-col flex-1">
+      <section className={s.projectList}>
         {projects.map((project, i) => (
           <Link
             key={i}
             href={`/case/${project.slug}`}
-            className="project-row group relative flex items-center px-6 md:px-12 pt-3 pb-8 md:pt-4 md:pb-11 min-h-[18vw] md:min-h-[11vw] overflow-hidden cursor-none border-b border-[#fbbf24]/20"
+            className="project-row"
             onMouseEnter={() => handleEnter(i)}
             onMouseLeave={handleLeave}
           >
             {/* Gold fill wipe on hover */}
-            <div className="absolute inset-x-0 -top-1 -bottom-1 bg-[#fbbf24] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+            <div className={s.goldFill} />
 
             {/* Index */}
-            <span className="relative hidden md:block w-16 shrink-0 font-mono text-sm text-[#fbbf24] group-hover:text-black transition-colors duration-300 tabular-nums self-end pb-1">
+            <span className={s.index}>
               0{i + 1}
             </span>
 
             {/* Title — masked reveal like Featured Cases */}
-            <div className="relative flex-1 py-2 md:py-3">
+            <div className={s.titleWrapper}>
               {/* Outline layer */}
-              <div className="overflow-hidden">
+              <div className={s.outlineWrap}>
                 <h2
-                  className="archive-row-title block text-[10vw] md:text-[7vw] font-black uppercase tracking-tighter leading-none text-transparent transition-transform duration-700 ease-out group-hover:scale-105 origin-left"
+                  className={`archive-row-title ${s.outlineTitle}`}
                   style={{ WebkitTextStroke: "2px rgba(255,255,255,0.25)" }}
                 >
                   {project.title}
                 </h2>
               </div>
               {/* Solid layer */}
-              <div className="absolute inset-0 py-2 md:py-3 overflow-hidden">
-                <h2 className="archive-row-title block text-[10vw] md:text-[7vw] font-black uppercase tracking-tighter leading-none text-white group-hover:text-black transition-[color,transform] duration-700 ease-out group-hover:scale-105 origin-left opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
+              <div className={s.solidOverlay}>
+                <h2 className={`archive-row-title ${s.solidTitle}`}>
                   {project.title}
                 </h2>
               </div>
             </div>
 
             {/* Category */}
-            <div className="relative hidden md:flex flex-col items-end gap-1 shrink-0 ml-8 self-end pb-1">
-              <span className="font-mono text-xs uppercase tracking-widest text-white/60 group-hover:text-black/60 transition-colors duration-300">
+            <div className={s.categoryWrapper}>
+              <span className={s.category}>
                 {project.category}
               </span>
-              <span className="font-mono text-xs text-[#fbbf24] group-hover:text-black/50 transition-colors duration-300">
+              <span className={s.year}>
                 {project.year}
               </span>
             </div>
 
             {/* Arrow */}
-            <div className="relative ml-6 md:ml-10 shrink-0 self-end pb-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
-              <svg className="w-6 h-6 -rotate-45 text-[#fbbf24] group-hover:text-black transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={s.arrowWrapper}>
+              <svg className={s.arrowSvg} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </div>
@@ -240,17 +241,17 @@ export default function Archive() {
       </section>
 
       {/* Footer */}
-      <div className="relative z-10 px-6 md:px-12 py-10 flex items-center justify-between">
+      <div className={s.footer}>
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-white/60 hover:text-[#fbbf24] transition-colors duration-300 cursor-pointer"
+          className={s.backButton}
         >
-          <svg className="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={s.backArrow} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
           Back
         </button>
-        <span className="text-[9px] font-mono uppercase tracking-widest text-white/30">Niko — 2026</span>
+        <span className={s.footerText}>Niko — 2026</span>
       </div>
     </main>
   );

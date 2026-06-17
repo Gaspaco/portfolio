@@ -1,6 +1,6 @@
 "use client";
 
-import CaseStudy from "@/components/CaseStudy";
+import CaseStudy from "@/components/features/CaseStudy";
 import { projects } from "@/lib/projects";
 
 export default function MelographCase() {

@@ -1,10 +1,11 @@
 'use client';
 
-import LoadingAnimations from '@/components/LoadingAnimations';
+import LoadingAnimations from '@/components/ui/LoadingAnimations';
+import s from './Demo.module.scss';
 
 export default function DemoLoadingPage() {
   return (
-    <div className="min-h-screen">
+    <div className={s.container}>
       <LoadingAnimations onComplete={() => {}} />
     </div>
   );

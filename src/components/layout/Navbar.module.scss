@@ -1,0 +1,138 @@
+@use '../../styles/mixins' as *;
+
+// ─── Nav ───
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: var(--z-nav);
+  padding-block: 1.75rem;
+}
+
+.inner {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @include md {
+    padding-inline: 3rem;
+  }
+}
+
+// ─── Logo ───
+.logoWrap {
+  pointer-events: auto;
+}
+
+.logoLink {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.logoText {
+  display: block;
+  transition: transform 500ms var(--ease-in-out);
+}
+
+.logoTextClone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  transform: translateY(100%);
+  transition: transform 500ms var(--ease-in-out);
+}
+
+.logoLink:hover .logoText {
+  transform: translateY(-100%);
+}
+
+.logoLink:hover .logoTextClone {
+  transform: translateY(0);
+}
+
+// ─── Menu trigger ───
+.menuTriggerWrap {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+
+  &:hover .menuLabelText {
+    transform: translateY(-100%);
+  }
+
+  &:hover .menuLabelClone {
+    transform: translateY(0);
+  }
+
+  &:hover .circle {
+    transform: scale(1.1);
+  }
+}
+
+// ─── Menu label text ───
+.menuLabel {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.menuLabelText {
+  display: block;
+  color: var(--c-dark-5);
+  transition: transform 500ms var(--ease-in-out);
+}
+
+.menuLabelClone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  color: var(--c-dark-5);
+  transform: translateY(100%);
+  transition: transform 500ms var(--ease-in-out);
+}
+
+// ─── Circle icon ───
+.circle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background-color: var(--c-dark-5);
+  transition: transform 300ms var(--ease-in-out);
+}
+
+.hamburgerWrap {
+  position: relative;
+  width: 0.875rem;
+  height: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburgerLine {
+  position: absolute;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--c-white);
+  transition: transform 400ms var(--ease-in-out);
+  transform-origin: center;
+}

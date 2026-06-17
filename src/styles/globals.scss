@@ -1,0 +1,25 @@
+@use 'variables';
+@use 'reset';
+@use 'animations';
+
+// ─── Base ───
+html {
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--c-white);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--c-accent);
+  color: var(--c-brand);
+}
+
+// ─── Grain overlay hide when menu open ───
+body.menu-open .grain-overlay {
+  display: none !important;
+}

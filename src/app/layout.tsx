@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
-import GrainOverlay from "@/components/GrainOverlay";
+import { Geist, Geist_Mono, Instrument_Serif, Caveat } from "next/font/google";
+import "../styles/globals.scss";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import GrainOverlay from "@/components/ui/GrainOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +13,19 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -27,9 +40,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="overflow-x-hidden">
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-[#0a0a0a] text-[#171717] dark:text-[#ededed]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${instrumentSerif.variable}`}
       >
         <SmoothScroll>
             <GrainOverlay />

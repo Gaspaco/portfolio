@@ -1,0 +1,190 @@
+@use '../../styles/mixins' as *;
+
+.section {
+  position: relative;
+  width: 100%;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  color: var(--c-white);
+  overflow: hidden;
+
+  @include md {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+    cursor: none;
+  }
+}
+
+.floatingCursor {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 180px;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  display: flex;
+  align-items: stretch;
+
+  @include md {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.iconContainer {
+  position: relative;
+  width: 250px;
+}
+
+.iconItem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconSvg {
+  width: 6rem;
+  height: 6rem;
+}
+
+.content {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+
+  @include md {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+.headerWrap {
+  margin-bottom: 3rem;
+  padding-bottom: 1.5rem;
+}
+
+.headerLabel {
+  font-size: 0.875rem;
+  @include font-mono;
+  color: var(--c-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 1rem;
+
+  @include md {
+    font-size: 1rem;
+  }
+}
+
+.titleMask {
+  overflow: hidden;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--c-white);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.8;
+
+  @include md {
+    font-size: 7.5vw;
+  }
+}
+
+.headerLine {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin-top: 1.5rem;
+  transform-origin: left;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.border {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  transform-origin: left;
+}
+
+.skillItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  z-index: var(--z-above);
+  cursor: pointer;
+  @include transition(background-color, var(--duration-base));
+
+  @include md {
+    padding: 3rem 2rem;
+    cursor: none;
+  }
+
+  &:hover {
+    background-color: var(--c-black);
+  }
+
+  &:hover .skillName {
+    color: var(--c-accent);
+  }
+
+  &:hover .skillCat {
+    color: var(--c-accent);
+  }
+}
+
+.nameMask {
+  overflow: hidden;
+}
+
+.skillName {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  color: var(--c-white);
+  @include transition(color, var(--duration-base));
+
+  @include md {
+    font-size: 4.5rem;
+  }
+}
+
+.skillNameActive {
+  color: var(--c-accent);
+}
+
+.skillCat {
+  font-size: 0.75rem;
+  @include font-mono;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  margin-left: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  @include transition(color);
+
+  @include md {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.skillCatActive {
+  color: var(--c-accent);
+}
