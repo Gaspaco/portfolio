@@ -8,7 +8,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "@/lib/projects";
 import Navbar from "../layout/Navbar";
-import CustomCursor from "../ui/CustomCursor";
 import s from "./CaseStudy.module.scss";
 
 export default function CaseStudy({ project, nextProject }: { project: Project; nextProject: Project }) {
@@ -135,7 +134,6 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
       <div ref={curtainRef} className={s.curtain1} />
       <div ref={curtain2Ref} className={s.curtain2} />
 
-      <CustomCursor />
       <Navbar />
 
       {/* ── HERO ── */}

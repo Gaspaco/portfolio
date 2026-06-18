@@ -12,6 +12,10 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const circleRef = useRef<HTMLSpanElement>(null);
+  const line1Ref = useRef<HTMLSpanElement>(null);
+  const line2Ref = useRef<HTMLSpanElement>(null);
+  const rippleRef = useRef<HTMLSpanElement>(null);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -34,6 +38,66 @@ export default function Navbar() {
     }, navRef);
     return () => ctx.revert();
   }, []);
+
+  const skipFirstRef = useRef(true);
+
+  useEffect(() => {
+    if (!line1Ref.current || !line2Ref.current) return;
+    gsap.set(line1Ref.current, { y: -3, rotate: 0 });
+    gsap.set(line2Ref.current, { y: 3, rotate: 0 });
+  }, []);
+
+  useEffect(() => {
+    if (skipFirstRef.current) {
+      skipFirstRef.current = false;
+      return;
+    }
+
+    const circle = circleRef.current;
+    const line1 = line1Ref.current;
+    const line2 = line2Ref.current;
+    if (!circle || !line1 || !line2) return;
+
+    const tl = gsap.timeline();
+
+    tl.to(circle, {
+      rotate: isMenuOpen ? 135 : 0,
+      scale: 1.14,
+      duration: 0.4,
+      ease: "back.out(2)",
+    })
+      .to(circle, { scale: 1, duration: 0.25, ease: "power2.out" }, "-=0.15")
+      .to(
+        line1,
+        {
+          y: isMenuOpen ? 0 : -3,
+          rotate: isMenuOpen ? 45 : 0,
+          duration: 0.45,
+          ease: "power3.inOut",
+        },
+        0
+      )
+      .to(
+        line2,
+        {
+          y: isMenuOpen ? 0 : 3,
+          rotate: isMenuOpen ? -45 : 0,
+          duration: 0.45,
+          ease: "power3.inOut",
+        },
+        0
+      );
+
+    if (rippleRef.current) {
+      gsap.fromTo(
+        rippleRef.current,
+        { scale: 0.4, opacity: 0.45 },
+        { scale: 1.9, opacity: 0, duration: 0.55, ease: "power2.out" }
+      );
+    }
+
+    return () => { tl.kill(); };
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -86,51 +150,27 @@ export default function Navbar() {
             <Magnetic>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={s.menuButton}
+                className={`${s.menuButton} menu-trigger-btn`}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
+                data-sound={isMenuOpen ? "close" : "switch"}
               >
                 <span className={s.menuLabel}>
-                  <span
-                    className={s.menuLabelText}
-                    style={{
-                      fontFamily: "var(--font-instrument-serif), Georgia, serif",
-                      fontStyle: "italic",
-                      fontSize: "1rem",
-                      fontWeight: 400,
-                      lineHeight: 1.2,
-                    }}
-                  >
+                  <span className={s.menuLabelText}>
                     {isMenuOpen ? "close" : "menu"}
                   </span>
-                  <span
-                    className={s.menuLabelClone}
-                    style={{
-                      fontFamily: "var(--font-instrument-serif), Georgia, serif",
-                      fontStyle: "italic",
-                      fontSize: "1rem",
-                      fontWeight: 400,
-                      lineHeight: 1.2,
-                    }}
-                  >
+                  <span className={s.menuLabelClone}>
                     {isMenuOpen ? "close" : "menu"}
                   </span>
                 </span>
 
                 {/* Circle icon */}
-                <span className={s.circle}>
+                <span className={s.circle} ref={circleRef}>
+                  <span className={s.ripple} ref={rippleRef} />
                   {/* Hamburger / X morphing */}
                   <span className={s.hamburgerWrap}>
-                    <span
-                      className={s.hamburgerLine}
-                      style={{
-                        transform: isMenuOpen ? "rotate(45deg)" : "translateY(-3px)",
-                      }}
-                    />
-                    <span
-                      className={s.hamburgerLine}
-                      style={{
-                        transform: isMenuOpen ? "rotate(-45deg)" : "translateY(3px)",
-                      }}
-                    />
+                    <span className={s.hamburgerLine} ref={line1Ref} />
+                    <span className={s.hamburgerLine} ref={line2Ref} />
                   </span>
                 </span>
               </button>

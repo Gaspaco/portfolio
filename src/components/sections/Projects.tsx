@@ -52,9 +52,6 @@ export default function Projects() {
     if (floatBounceRef.current) {
       gsap.set(floatBounceRef.current.querySelectorAll(".project-slide"), { yPercent: 100 });
     }
-    document.querySelectorAll("[data-custom-cursor]").forEach((el) => {
-      gsap.set(el, { opacity: 1 });
-    });
   }, []);
 
   useEffect(() => {
@@ -177,9 +174,6 @@ export default function Projects() {
     setActiveIndex(i);
     isHovering.current = true;
     gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
-    document.querySelectorAll("[data-custom-cursor]").forEach((el) => {
-      gsap.to(el, { opacity: 0, duration: 0.15 });
-    });
 
     const images = floatBounceRef.current?.querySelectorAll(".project-slide");
     if (!images) return;
@@ -199,13 +193,10 @@ export default function Projects() {
     setActiveIndex(null);
     isHovering.current = false;
     gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
-    document.querySelectorAll("[data-custom-cursor]").forEach((el) => {
-      gsap.to(el, { opacity: 1, duration: 0.15 });
-    });
   }, []);
 
   return (
-    <section ref={containerRef} className={s.section} style={{ clipPath: "inset(0)" }} onMouseLeave={forceHide}>
+    <section id="projects" ref={containerRef} className={s.section} style={{ clipPath: "inset(0)" }} onMouseLeave={forceHide}>
 
       {/* Floating image — follows cursor with bounce rotation */}
       <div

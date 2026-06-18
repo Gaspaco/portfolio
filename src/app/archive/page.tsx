@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
-import CustomCursor from "@/components/ui/CustomCursor";
 import { projects } from "@/lib/projects";
 import s from "./Archive.module.scss";
 
@@ -19,7 +18,6 @@ export default function Archive() {
   const curtainRef = useRef<HTMLDivElement>(null);
   const curtain2Ref = useRef<HTMLDivElement>(null);
   const [activeProject, setActiveProject] = useState<number | null>(null);
-  const [hideCursor, setHideCursor] = useState(false);
   const prevIndex = useRef<number | null>(null);
   const isHovering = useRef(false);
 
@@ -110,7 +108,6 @@ export default function Archive() {
     const prev = prevIndex.current;
     prevIndex.current = i;
     setActiveProject(i);
-    setHideCursor(true);
     isHovering.current = true;
     gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
 
@@ -130,7 +127,6 @@ export default function Archive() {
 
   const handleLeave = useCallback(() => {
     setActiveProject(null);
-    setHideCursor(false);
     isHovering.current = false;
     gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
   }, []);
@@ -146,9 +142,6 @@ export default function Archive() {
         style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
       />
 
-      <div style={{ opacity: hideCursor ? 0 : 1, transition: 'opacity 0.15s ease-out', pointerEvents: 'none' }}>
-        <CustomCursor />
-      </div>
       <Navbar />
 
       {/* Floating image — spring cursor follow with directional slide */}

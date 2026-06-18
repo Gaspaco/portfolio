@@ -19,25 +19,9 @@ const SKILLS = [
 export default function SkillsList() {
   const [activeSkill, setActiveSkill] = useState<number | null>(null);
   const [headerVisible, setHeaderVisible] = useState(false);
-  const cursorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      if (!cursorRef.current) return;
-      // Only move cursor on desktop
-      if (window.matchMedia("(min-width: 768px)").matches) {
-          gsap.to(cursorRef.current, {
-            x: e.clientX,
-            y: e.clientY,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-      }
-    };
-
-    window.addEventListener("mousemove", moveCursor);
-
     gsap.registerPlugin(ScrollTrigger);
 
     // Entrance Animation
@@ -98,7 +82,6 @@ export default function SkillsList() {
     }, containerRef);
 
     return () => {
-        window.removeEventListener("mousemove", moveCursor);
         ctx.revert();
     };
   }, []);
@@ -132,46 +115,7 @@ export default function SkillsList() {
   };
 
   return (
-    <section ref={containerRef} className={s.section}
-      onMouseEnter={() => {
-        document.querySelectorAll('[data-custom-cursor]').forEach(el => (el as HTMLElement).style.opacity = '0');
-      }}
-      onMouseLeave={() => {
-        document.querySelectorAll('[data-custom-cursor]').forEach(el => (el as HTMLElement).style.opacity = '');
-      }}
-    >
-
-      {/* Floating Image Cursor (Custom Design) */}
-      <div
-        ref={cursorRef}
-        className={s.floatingCursor}
-        style={{ opacity: activeSkill !== null ? 1 : 0, transition: "opacity 0.3s ease-out" }}
-      >
-        {/* Icon Container */}
-        <div className={s.iconContainer}>
-            {SKILLS.map((skill, i) => (
-                <div
-                    key={i}
-                    className={s.iconItem}
-                    style={{
-                        opacity: activeSkill === i ? 1 : 0,
-                        zIndex: activeSkill === i ? 10 : 1,
-                    }}
-                >
-                    <svg
-                        role="img"
-                        viewBox="0 0 24 24"
-                        className={s.iconSvg}
-                        fill={skill.icon.hex === "000000" ? "#ffffff" : `#${skill.icon.hex}`}
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path d={skill.icon.path} />
-                    </svg>
-                </div>
-            ))}
-        </div>
-      </div>
-
+    <section ref={containerRef} className={s.section}>
       <div className={s.content}>
         <div className={s.headerWrap}>
           <span className={s.headerLabel}>

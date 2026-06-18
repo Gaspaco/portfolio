@@ -167,75 +167,7 @@ export default function About() {
           <div className={s.blob2} />
       </div>
 
-      {/* --- PART 1: THE MANIFESTO --- */}
-      <div className={s.manifesto} style={{ perspective: "1000px" }}>
-        <div className={s.manifestoInner}>
-            <h2 className={s.sectionLabel}>
-                {'//'} The Manifesto
-            </h2>
-
-            {/* Line 1 */}
-            <div className={s.lineContainer}>
-                {"BUILDING".split(" ").map((word, i) => (
-                    <span
-                        key={i}
-                        className={`${s.heroWord} hero-word`}
-                        onMouseEnter={triggerGlitch}
-                    >
-                        {word}
-                    </span>
-                ))}
-            </div>
-
-            {/* Line 2 */}
-            <div className={s.lineContainer}>
-                {"DIGITAL".split(" ").map((word, i) => (
-                    <span
-                        key={i}
-                        className={`${s.heroWord} hero-word`}
-                        onMouseEnter={triggerGlitch}
-                    >
-                        {word}
-                    </span>
-                ))}
-            </div>
-
-            {/* Line 3 (Hollow) */}
-            <div className={s.lineContainerSpaced}>
-                {"LEGACIES".split(" ").map((word, i) => (
-                    <span
-                        key={i}
-                        className={`${s.heroWordAccent} hero-word`}
-                        onMouseEnter={triggerGlitch}
-                    >
-                        {word}
-                    </span>
-                ))}
-            </div>
-
-             {/* Line 4 */}
-             <div className={s.lineContainer}>
-                {"THAT LAST".split(" ").map((word, i) => (
-                    <span
-                        key={i}
-                        className={`${s.heroWordMuted} hero-word`}
-                        onMouseEnter={triggerGlitch}
-                    >
-                        {word}
-                    </span>
-                ))}
-            </div>
-        </div>
-
-        <div className={s.descriptionBlock}>
-            <p className={s.descriptionText}>
-                I am a passionate developer driven by a single goal: to create applications and websites that are <span className={s.remembered}>remembered</span>.
-                It's not just about code; it's about crafting experiences that leave a lasting mark.
-            </p>
-        </div>
-      </div>
-
-      {/* --- PART 2: THE PHILOSOPHY (Horizontal Scroll) --- */}
+      {/* --- THE PHILOSOPHY (Horizontal Scroll) --- */}
       <div className={`${s.philosophyWrapper} philosophy-wrapper`}>
         <div className={`${s.philosophyTrack} philosophy-track`}>
 

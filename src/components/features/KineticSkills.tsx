@@ -40,7 +40,7 @@ export default function KineticSkills() {
   };
 
   return (
-    <section ref={containerRef} className="relative w-full py-20 bg-[#8c1921] text-white overflow-hidden cursor-none">
+    <section ref={containerRef} className="relative w-full py-20 bg-[#8c1921] text-white overflow-hidden">
       
       {/* Floating Image Reveal (Follows Cursor) */}
       <div 

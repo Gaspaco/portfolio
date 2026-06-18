@@ -1,0 +1,97 @@
+@use '../../styles/mixins' as *;
+
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background: var(--c-white);
+  display: grid;
+  place-items: center;
+  padding: clamp(6rem, 14vw, 10rem) 1rem;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.deck {
+  position: relative;
+  width: clamp(18rem, 34vw, 26rem);
+  aspect-ratio: 3 / 4;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  perspective: 900px;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vw, 1.5rem);
+  padding: clamp(2rem, 4vw, 3rem);
+  border-radius: clamp(1rem, 1.8vw, 1.25rem);
+  background: var(--c-dark-5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.cardIcon {
+  width: clamp(3.2rem, 7vw, 5rem);
+  height: clamp(3.2rem, 7vw, 5rem);
+  color: var(--accent);
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 28%, transparent));
+}
+
+.cardName {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--c-white);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.cardTag {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(0.62rem, 0.85vw, 0.72rem);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.deckCount {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(0.62rem, 0.8vw, 0.72rem);
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.28);
+}
+
+@media (max-width: 767px) {
+  .deck {
+    width: clamp(16rem, 68vw, 22rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck,
+  .card {
+    transform: none !important;
+    opacity: 1;
+  }
+}

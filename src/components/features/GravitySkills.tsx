@@ -69,7 +69,7 @@ export default function GravitySkills() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full py-20 bg-[#8c1921] overflow-hidden cursor-none">
+    <div ref={containerRef} className="relative w-full py-20 bg-[#8c1921] overflow-hidden">
       {/* Spotlight Overlay */}
       <div 
         ref={overlayRef}

@@ -2,13 +2,9 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
-import Projects from "@/components/sections/Projects";
-import About from "@/components/sections/About";
-import Footer from "@/components/layout/Footer";
+import CraftBuild from "@/components/sections/CraftBuild";
 import LoadingAnimations from "@/components/ui/LoadingAnimations";
-import CustomCursor from "@/components/ui/CustomCursor";
 import SmoothScroll from "@/components/layout/SmoothScroll";
-import Marquee from "@/components/sections/Marquee";
 import { useEffect, useState } from "react";
 import s from './page.module.scss';
 
@@ -30,15 +26,11 @@ export default function Home() {
   return (
     <SmoothScroll>
       <main className={s.main}>
-        <CustomCursor />
         {isLoading && <LoadingAnimations onComplete={handleLoadComplete} />}
 
         <Navbar />
         <Hero />
-        <Marquee />
-        <About />
-        <Projects />
-        <Footer />
+        <CraftBuild />
       </main>
     </SmoothScroll>
   );

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Serif, Caveat } from "next/font/google";
 import "../styles/globals.scss";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import GrainOverlay from "@/components/ui/GrainOverlay";
+import SoundEffects from "@/components/ui/SoundEffects";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default function RootLayout({
       >
         <SmoothScroll>
             <GrainOverlay />
+            <SoundEffects />
             {children}
         </SmoothScroll>
       </body>
