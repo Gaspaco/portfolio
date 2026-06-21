@@ -222,7 +222,7 @@ export default function Projects() {
             {/* Row */}
             <Link
               href={project.link}
-              className="group flex items-center justify-between py-10 md:py-14 md:cursor-none relative"
+              className="group flex items-center justify-between py-10 md:py-14 relative"
               onMouseEnter={() => handleEnter(i)}
               onMouseLeave={handleLeave}
             >
