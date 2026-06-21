@@ -19,6 +19,8 @@ type HowlerController = {
   mute: (muted: boolean) => void;
 };
 
+type SoundPlayEvent = CustomEvent<{ sound?: MenuSoundKey }>;
+
 const SOUND_TARGET_SELECTOR = "[data-sound]:not([data-sound='off'])";
 const AUDIO_BASE_URL = process.env.NEXT_PUBLIC_SOUND_BASE_URL || "/sounds";
 const MENU_SOUND_KEYS = new Set<MenuSoundKey>([
@@ -241,6 +243,14 @@ export default function SoundEffects() {
       setMuted(!mutedRef.current);
     };
 
+    const handleSoundPlay = (event: Event) => {
+      const customEvent = event as SoundPlayEvent;
+      const sound = customEvent.detail?.sound;
+      if (!sound || !MENU_SOUND_KEYS.has(sound)) return;
+      void startAmbient();
+      void play(sound);
+    };
+
     const storedMuted = window.localStorage.getItem("sound-muted") === "1";
     setMuted(storedMuted);
 
@@ -248,6 +258,7 @@ export default function SoundEffects() {
     document.addEventListener("pointerdown", handleFirstInteraction, true);
     document.addEventListener("keydown", handleFirstInteraction, true);
     window.addEventListener("sound-toggle", handleToggleSound);
+    window.addEventListener("sound-play", handleSoundPlay);
 
     return () => {
       disposed = true;
@@ -255,6 +266,7 @@ export default function SoundEffects() {
       document.removeEventListener("pointerdown", handleFirstInteraction, true);
       document.removeEventListener("keydown", handleFirstInteraction, true);
       window.removeEventListener("sound-toggle", handleToggleSound);
+      window.removeEventListener("sound-play", handleSoundPlay);
       if (soundsRef.current) {
         Object.values(soundsRef.current.effects).forEach((sound) => sound.stop());
       }

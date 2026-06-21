@@ -7,6 +7,11 @@ html {
   overflow-x: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  cursor: url('/cursor.svg') 0 0, auto;
+}
+
+*, *::before, *::after {
+  cursor: inherit;
 }
 
 html::-webkit-scrollbar,
@@ -24,8 +29,8 @@ body {
 }
 
 ::selection {
-  background-color: var(--c-accent);
-  color: var(--c-brand);
+  background-color: rgba(17, 17, 17, 0.15);
+  color: inherit;
 }
 
 // ─── Grain overlay hide when menu open ───

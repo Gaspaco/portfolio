@@ -70,7 +70,7 @@ export default function Hero() {
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
     };
 
-    const drawFallback = () => {
+    const drawFallback = (message = "allow camera") => {
       const { width, height } = canvas;
       ctx.fillStyle = "#080808";
       ctx.fillRect(0, 0, width, height);
@@ -78,7 +78,7 @@ export default function Hero() {
       ctx.font = `${Math.max(16, width * 0.035)}px monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("allow camera", width / 2, height / 2);
+      ctx.fillText(message, width / 2, height / 2);
     };
 
     const draw = () => {
@@ -147,6 +147,16 @@ export default function Hero() {
     resize();
     window.addEventListener("resize", resize);
 
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setCameraFailed(true);
+      drawFallback("use localhost or https");
+      return () => {
+        disposed = true;
+        cancelAnimationFrame(raf);
+        window.removeEventListener("resize", resize);
+      };
+    }
+
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } })
       .then((mediaStream) => {
         if (disposed) {
@@ -156,13 +166,19 @@ export default function Hero() {
 
         stream = mediaStream;
         video.srcObject = mediaStream;
-        video.play();
-        setCameraFailed(false);
-        raf = requestAnimationFrame(draw);
+        video.play()
+          .then(() => {
+            setCameraFailed(false);
+            raf = requestAnimationFrame(draw);
+          })
+          .catch(() => {
+            setCameraFailed(true);
+            drawFallback("click allow camera");
+          });
       })
       .catch(() => {
         setCameraFailed(true);
-        drawFallback();
+        drawFallback("click allow camera");
       });
 
     return () => {
@@ -220,7 +236,7 @@ export default function Hero() {
       <div ref={imageRef} className={s.imageContainer}>
         <div className={s.effectFrame} aria-label={cameraFailed ? "Camera unavailable" : "Live camera ascii effect"}>
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video ref={videoRef} className={s.hiddenVideo} playsInline muted />
+          <video ref={videoRef} className={s.hiddenVideo} playsInline muted autoPlay />
           <canvas ref={canvasRef} className={s.effectCanvas} />
           <div className={s.effectGrain} aria-hidden="true" />
         </div>

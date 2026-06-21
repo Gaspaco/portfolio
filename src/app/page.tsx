@@ -3,6 +3,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
 import CraftBuild from "@/components/sections/CraftBuild";
+import Projects from "@/components/sections/Projects";
 import LoadingAnimations from "@/components/ui/LoadingAnimations";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import { useEffect, useState } from "react";
@@ -31,6 +32,7 @@ export default function Home() {
         <Navbar />
         <Hero />
         <CraftBuild />
+        <Projects />
       </main>
     </SmoothScroll>
   );
