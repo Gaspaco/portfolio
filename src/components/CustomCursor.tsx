@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+
 
   useEffect(() => {
     const cursor = cursorRef.current;
@@ -45,8 +45,6 @@ export default function CustomCursor() {
                      target.closest('a') ||
                      target.closest('button') ||
                      target.closest('.cursor-pointer');
-
-      setIsHovered(!!isLink);
 
       if (isLink) {
         // Hover state: Expand follower, hide dot
@@ -90,9 +88,8 @@ export default function CustomCursor() {
         ref={followerRef}
         data-custom-cursor
         className="hidden [@media(pointer:fine)]:flex fixed top-0 left-0 w-12 h-12 border border-accent-secondary rounded-full pointer-events-none z-[9998] items-center justify-center transition-transform duration-300 ease-out transition-opacity duration-200"
-      >
-         <span className={`text-[3px] font-bold uppercase tracking-widest text-accent-secondary transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>View</span>
-      </div>
+      />
+
     </>
   );
 }

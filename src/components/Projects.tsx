@@ -35,8 +35,8 @@ const projects = [
     title: "MeloStudio",
     category: "Creative Platform",
     year: "2026",
-    src: "/image copy.png",
-    link: "https://github.com/Gaspaco/MeloStudio",
+    src: "/melostudio.png",
+    link: "https://melostudio.nl/",
     bg: "#1a1a2e",
   },
 ];
