@@ -12,7 +12,8 @@ const projects = [
     category: "Fitness App",
     year: "2025",
     src: "/aria.png",
-    link: "https://health-app-xi-five.vercel.app/",
+    slug: "aria",
+    link: "/case/aria",
     bg: "#4a90d9",
   },
   {
@@ -20,7 +21,8 @@ const projects = [
     category: "Creative Studio",
     year: "2026",
     src: "/image copy 2.png",
-    link: "https://melographstudio.online/",
+    slug: "melograph",
+    link: "/case/melograph",
     bg: "#8c1921",
   },
   {
@@ -28,7 +30,8 @@ const projects = [
     category: "Construction",
     year: "2026",
     src: "/dima-bouw.png",
-    link: "https://dimabouw.nl",
+    slug: "dimabouw",
+    link: "/case/dimabouw",
     bg: "#1a3a8a",
   },
   {
@@ -36,7 +39,8 @@ const projects = [
     category: "Creative Platform",
     year: "2026",
     src: "/melostudio.png",
-    link: "https://melostudio.nl/",
+    slug: "melostudio",
+    link: "/case/melostudio",
     bg: "#1a1a2e",
   },
 ];
@@ -149,27 +153,34 @@ export default function Projects() {
     prevIndex.current = i;
     setActiveIndex(i);
     isHovering.current = true;
-    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+    gsap.to("[data-custom-cursor]", { opacity: 0, duration: 0.15 });
+    gsap.killTweensOf(floatWrapRef.current, "opacity,scale");
+    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" });
 
-    // Slide animation between images
     const images = floatBounceRef.current?.querySelectorAll(".project-slide");
     if (!images) return;
 
     const direction = prev !== null && i > prev ? 1 : -1;
 
     images.forEach((img, idx) => {
+      gsap.killTweensOf(img);
       if (idx === i) {
-        gsap.fromTo(img, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.5, ease: "power3.out" });
+        gsap.fromTo(img, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.35, ease: "power4.out" });
       } else if (idx === prev) {
-        gsap.to(img, { yPercent: direction * -100, duration: 0.5, ease: "power3.out" });
+        gsap.to(img, { yPercent: direction * -100, duration: 0.35, ease: "power4.out" });
+      } else {
+        gsap.set(img, { yPercent: 100 });
       }
     });
   }, []);
 
   const handleLeave = useCallback(() => {
     setActiveIndex(null);
+    prevIndex.current = null;
     isHovering.current = false;
-    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
+    gsap.to("[data-custom-cursor]", { opacity: 1, duration: 0.15 });
+    gsap.killTweensOf(floatWrapRef.current, "opacity,scale");
+    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.95, duration: 0.2, ease: "power2.in" });
   }, []);
 
   return (

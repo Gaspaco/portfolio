@@ -111,7 +111,8 @@ export default function Archive() {
     setActiveProject(i);
     setHideCursor(true);
     isHovering.current = true;
-    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+    gsap.killTweensOf(floatWrapRef.current, "opacity,scale");
+    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" });
 
     const slides = floatBounceRef.current?.querySelectorAll(".archive-slide");
     if (!slides) return;
@@ -119,19 +120,24 @@ export default function Archive() {
     const direction = prev !== null && i > prev ? 1 : -1;
 
     slides.forEach((slide, idx) => {
+      gsap.killTweensOf(slide);
       if (idx === i) {
-        gsap.fromTo(slide, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.5, ease: "power3.out" });
+        gsap.fromTo(slide, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.35, ease: "power4.out" });
       } else if (idx === prev) {
-        gsap.to(slide, { yPercent: direction * -100, duration: 0.5, ease: "power3.out" });
+        gsap.to(slide, { yPercent: direction * -100, duration: 0.35, ease: "power4.out" });
+      } else {
+        gsap.set(slide, { yPercent: 100 });
       }
     });
   }, []);
 
   const handleLeave = useCallback(() => {
     setActiveProject(null);
+    prevIndex.current = null;
     setHideCursor(false);
     isHovering.current = false;
-    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
+    gsap.killTweensOf(floatWrapRef.current, "opacity,scale");
+    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.95, duration: 0.2, ease: "power2.in" });
   }, []);
 
   return (

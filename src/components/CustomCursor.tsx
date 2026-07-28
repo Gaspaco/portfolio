@@ -37,43 +37,10 @@ export default function CustomCursor() {
       yToFollower(e.clientY);
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Check for interactive elements
-      const isLink = target.tagName === "A" ||
-                     target.tagName === "BUTTON" ||
-                     target.closest('a') ||
-                     target.closest('button') ||
-                     target.closest('.cursor-pointer');
-
-      if (isLink) {
-        // Hover state: Expand follower, hide dot
-        gsap.to(follower, {
-          scale: 3,
-          backgroundColor: "white",
-          mixBlendMode: "difference",
-          duration: 0.3
-        });
-        gsap.to(cursor, { opacity: 0, duration: 0.3 });
-      } else {
-        // Default state: Reset follower, show dot
-        gsap.to(follower, {
-          scale: 1,
-          backgroundColor: "transparent",
-          border: "1px solid white",
-          mixBlendMode: "difference",
-          duration: 0.3
-        });
-        gsap.to(cursor, { opacity: 1, duration: 0.3 });
-      }
-    };
-
     window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
-      window.removeEventListener("mouseover", handleMouseOver);
     };
   }, []);
 
@@ -87,7 +54,7 @@ export default function CustomCursor() {
       <div
         ref={followerRef}
         data-custom-cursor
-        className="hidden [@media(pointer:fine)]:flex fixed top-0 left-0 w-12 h-12 border border-accent-secondary rounded-full pointer-events-none z-[9998] items-center justify-center transition-transform duration-300 ease-out transition-opacity duration-200"
+        className="hidden [@media(pointer:fine)]:flex fixed top-0 left-0 w-12 h-12 bg-white rounded-full pointer-events-none z-[9998] items-center justify-center mix-blend-difference transition-transform duration-300 ease-out transition-opacity duration-200"
       />
 
     </>
