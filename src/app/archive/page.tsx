@@ -10,11 +10,10 @@ import s from "./Archive.module.scss";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const previews = [
-  "/project-aria-new.jpg",
-  "/project-melograph-red.png",
-  "/museum.png",
-];
+const previews: Partial<Record<string, string>> = {
+  aria: "/project-aria-new.jpg",
+  melograph: "/project-melograph-red.png",
+};
 
 const palettes = [s.aria, s.melograph, s.museum];
 
@@ -113,13 +112,13 @@ export default function Archive() {
         {projects.map((project, index) => (
           <article
             key={project.slug}
-            className={`${s.project} ${palettes[index]}`}
+            className={`${s.project} ${palettes[index] ?? s.aria}`}
           >
             <span className={s.index}>0{index + 1}</span>
 
             <Link href={`/case/${project.slug}`} className={s.visual}>
               <Image
-                src={previews[index]}
+                src={previews[project.slug] ?? project.src}
                 alt={`${project.title} project preview`}
                 fill
                 className={s.image}

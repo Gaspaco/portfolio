@@ -10,7 +10,10 @@ import s from "./Projects.module.scss";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PREVIEWS = ["/project-aria-new.jpg", "/project-melograph-red.png", "/museum.png"];
+const PREVIEWS: Partial<Record<string, string>> = {
+  aria: "/project-aria-new.jpg",
+  melograph: "/project-melograph-red.png",
+};
 const FOOTER_TEXT = "More experiments are always in progress.";
 
 function PixelArrowUpRight({ className }: { className: string }) {
@@ -156,7 +159,7 @@ export default function Projects() {
 
             <div className={s.media}>
               <Image
-                src={PREVIEWS[index]}
+                src={PREVIEWS[project.slug] ?? project.src}
                 alt={`${project.title} website preview`}
                 fill
                 className={s.image}
