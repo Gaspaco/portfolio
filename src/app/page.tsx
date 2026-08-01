@@ -13,12 +13,12 @@ import { useEffect, useState } from "react";
 import s from './page.module.scss';
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const hasLoaded = sessionStorage.getItem("hasLoaded");
-    if (!hasLoaded) {
-      setIsLoading(true);
+    if (hasLoaded) {
+      setIsLoading(false);
     }
   }, []);
 
