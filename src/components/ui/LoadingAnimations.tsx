@@ -37,14 +37,14 @@ export default function LoadingAnimations({ onComplete }: { onComplete: () => vo
       tl.to(counterRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.5,
+        duration: 0.25,
         ease: "power3.out"
       })
       
       // 2. Counter counts up (Slower)
       .to(progressObj, {
         value: 100,
-        duration: 2.0,
+        duration: 0.75,
         ease: "expo.inOut",
         onUpdate: () => {
             if (counterRef.current) {
@@ -54,7 +54,7 @@ export default function LoadingAnimations({ onComplete }: { onComplete: () => vo
       })
       .to(".loading-bar", {
         scaleX: 1,
-        duration: 2.0,
+        duration: 0.75,
         ease: "expo.inOut"
       }, "<")
 
@@ -62,23 +62,23 @@ export default function LoadingAnimations({ onComplete }: { onComplete: () => vo
       .to([counterRef.current, ".loading-bar", ".loading-text"], {
         opacity: 0,
         y: -20,
-        duration: 0.4,
+        duration: 0.2,
         ease: "power2.in"
       })
 
       // 4. Main Curtain Reveal (Red)
       .to(mainPanelRef.current, {
         yPercent: -100,
-        duration: 0.8, // Faster reveal
+        duration: 0.55,
         ease: "expo.inOut"
-      }, "-=0.1")
+      }, "-=0.05")
 
       // 5. Secondary Curtain Reveal (Dark) - Parallax effect
       .to(subPanelRef.current, {
         yPercent: -100,
-        duration: 0.8, // Faster reveal
+        duration: 0.55,
         ease: "expo.inOut"
-      }, "-=0.6");
+      }, "-=0.4");
 
     }, containerRef);
 

@@ -4,6 +4,7 @@ export interface Project {
   category: string;
   year: string;
   src: string;
+  caseHero?: string;
   images: string[];
   liveUrl: string;
   description: string;
@@ -24,8 +25,8 @@ export const projects: Project[] = [
     title: "Aria",
     category: "Fitness App",
     year: "2025",
-    src: "/aria.png",
-    images: ["/aria.png", "/pexels-agk42-2816903.jpg"],
+    src: "/screenshots/aria-screenshot.png",
+    images: ["/screenshots/aria-screenshot.png", "/pexels-agk42-2816903.jpg"],
     liveUrl: "https://health-app-xi-five.vercel.app/",
     description: "A revolutionary approach to personal fitness tracking.",
     longDescription:
@@ -55,9 +56,10 @@ export const projects: Project[] = [
     title: "Melograph",
     category: "Creative Studio",
     year: "2026",
-    src: "/image copy 2.png",
-    images: ["/image copy 2.png", "/image copy.png"],
-    liveUrl: "https://melograph.vercel.app/",
+    src: "/project-melograph-red.png",
+    caseHero: "/case-melograph-hero.png",
+    images: ["/project-melograph-red.png", "/project-melograph-live.png"],
+    liveUrl: "https://melographstudio.online/",
     description: "High-performance digital experiences and motion design.",
     longDescription:
       "Melograph Studio needed a web presence that matched the energy of their creative output. The site serves as both a portfolio and a statement piece — every scroll, every transition, every hover is intentional. It had to load fast, feel premium, and leave an impression.",

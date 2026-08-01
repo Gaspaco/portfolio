@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import gsap from "gsap";
 import Magnetic from "../ui/Magnetic";
@@ -10,22 +10,28 @@ import s from "./Navbar.module.scss";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [hidden, setHidden] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const circleRef = useRef<HTMLSpanElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
   const rippleRef = useRef<HTMLSpanElement>(null);
-  const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    const previous = scrollY.getPrevious() ?? 0;
-    if (latest > previous && latest > 150) {
-      setHidden(true);
-    } else {
-      setHidden(false);
-    }
-  });
+  useEffect(() => {
+    setIsMuted(window.localStorage.getItem("sound-muted") === "1");
+
+    const handleMutedChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ muted: boolean }>;
+      setIsMuted(customEvent.detail.muted);
+    };
+
+    window.addEventListener("sound-muted-change", handleMutedChange);
+    return () => window.removeEventListener("sound-muted-change", handleMutedChange);
+  }, []);
+
+  const toggleSound = () => {
+    window.dispatchEvent(new CustomEvent("sound-toggle"));
+  };
 
   useEffect(() => {
     if (!navRef.current) return;
@@ -107,7 +113,7 @@ export default function Navbar() {
           visible: { y: 0, opacity: 1 },
           hidden: { y: -100, opacity: 0 },
         }}
-        animate={isMenuOpen ? "visible" : hidden ? "hidden" : "visible"}
+        animate="visible"
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className={s.nav}
       >
@@ -124,7 +130,7 @@ export default function Navbar() {
                     fontSize: "1.6rem",
                     fontWeight: 700,
                     lineHeight: 1,
-                    color: isMenuOpen ? "#111" : "#111",
+                    color: "#111",
                   }}
                 >
                   Niko Dima
@@ -147,34 +153,52 @@ export default function Navbar() {
 
           {/* Menu trigger */}
           <div className={`${s.menuTriggerWrap} nav-enter`} style={{ opacity: 0 }}>
-            <Magnetic>
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className={`${s.menuButton} menu-trigger-btn`}
-                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={isMenuOpen}
-                data-sound={isMenuOpen ? "close" : "switch"}
-              >
-                <span className={s.menuLabel}>
-                  <span className={s.menuLabelText}>
-                    {isMenuOpen ? "close" : "menu"}
+            <div className={s.controlDock} data-open={isMenuOpen}>
+              <Magnetic>
+                <button
+                  type="button"
+                  className={s.soundButton}
+                  onClick={toggleSound}
+                  aria-pressed={!isMuted}
+                  aria-label={isMuted ? "Turn sound on" : "Mute sound"}
+                  data-sound={isMuted ? "switch" : "close"}
+                >
+                  <span className={s.soundBars} aria-hidden="true">
+                    <span className={isMuted ? s.barMuted : undefined} />
+                    <span className={isMuted ? s.barMuted : undefined} />
+                    <span className={isMuted ? s.barMuted : undefined} />
                   </span>
-                  <span className={s.menuLabelClone}>
-                    {isMenuOpen ? "close" : "menu"}
-                  </span>
-                </span>
+                  <span className={s.soundText}>{isMuted ? "off" : "on"}</span>
+                </button>
+              </Magnetic>
 
-                {/* Circle icon */}
-                <span className={s.circle} ref={circleRef}>
-                  <span className={s.ripple} ref={rippleRef} />
-                  {/* Hamburger / X morphing */}
-                  <span className={s.hamburgerWrap}>
-                    <span className={s.hamburgerLine} ref={line1Ref} />
-                    <span className={s.hamburgerLine} ref={line2Ref} />
+              <Magnetic>
+                <button
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className={`${s.menuButton} menu-trigger-btn`}
+                  aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                  aria-expanded={isMenuOpen}
+                  data-sound={isMenuOpen ? "close" : "switch"}
+                >
+                  <span className={s.menuLabel}>
+                    <span className={s.menuLabelText}>
+                      {isMenuOpen ? "close" : "menu"}
+                    </span>
+                    <span className={s.menuLabelClone}>
+                      {isMenuOpen ? "close" : "menu"}
+                    </span>
                   </span>
-                </span>
-              </button>
-            </Magnetic>
+
+                  <span className={s.circle} ref={circleRef}>
+                    <span className={s.ripple} ref={rippleRef} />
+                    <span className={s.hamburgerWrap}>
+                      <span className={s.hamburgerLine} ref={line1Ref} />
+                      <span className={s.hamburgerLine} ref={line2Ref} />
+                    </span>
+                  </span>
+                </button>
+              </Magnetic>
+            </div>
           </div>
         </div>
       </motion.nav>

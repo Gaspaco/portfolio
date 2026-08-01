@@ -1,109 +1,207 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLayoutEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { projects } from "@/lib/projects";
 import s from "./Projects.module.scss";
 
-const PROJECTS = [
-  {
-    title: "Aria",
-    src: "/aria.png",
-    link: "/case/aria",
-    role: "Interface",
-    year: "2025",
-  },
-  {
-    title: "Melograph",
-    src: "/impact.png",
-    link: "/case/melograph",
-    role: "Studio site",
-    year: "2026",
-  },
-  {
-    title: "Museum",
-    src: "/museum.png",
-    link: "/case/museum",
-    role: "Archive",
-    year: "2025",
-  },
-  {
-    title: "Precision",
-    src: "/precission.jpg",
-    link: "/archive",
-    role: "Prototype",
-    year: "2026",
-  },
-];
+gsap.registerPlugin(ScrollTrigger);
 
-const pad = (n: number) => String(n).padStart(2, "0");
+const PREVIEWS = ["/project-aria-new.jpg", "/project-melograph-red.png", "/museum.png"];
+const FOOTER_TEXT = "More experiments are always in progress.";
+
+function PixelArrowUpRight({ className }: { className: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M4 11v2h16v-2zm12 2v2h2v-2zm-2 2v2h2v-2zm-2 2v2h2v-2zm4-6V9h2v2z" />
+      <path d="M14 15V7h2v8zm-2 2V5h2v12z" />
+    </svg>
+  );
+}
 
 export default function Projects() {
-  const [current, setCurrent] = useState(0);
-  const project = PROJECTS[current];
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const playSound = useCallback((sound: "switch" | "longclick") => {
-    window.dispatchEvent(new CustomEvent("sound-play", { detail: { sound } }));
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+    if (!section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        `.${s.heading} > *`,
+        { opacity: 0, y: 36 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${s.heading}`,
+            start: "top 84%",
+            once: true,
+          },
+        },
+      );
+
+      gsap.utils.toArray<HTMLElement>(`.${s.project}`).forEach((project) => {
+        const top = project.querySelector(`.${s.projectTop}`);
+        const image = project.querySelector(`.${s.image}`);
+        const mediaTitle = project.querySelector(`.${s.mediaTitle}`);
+        const bottom = project.querySelector(`.${s.projectBottom}`);
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: project,
+            start: "top 82%",
+            once: true,
+          },
+        });
+
+        timeline
+          .fromTo(top, { opacity: 0, y: 28 }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.65,
+            ease: "power3.out",
+          })
+          .fromTo(image, { clipPath: "inset(0 0 100% 0)" }, {
+            clipPath: "inset(0 0 0% 0)",
+            duration: 0.9,
+            ease: "power4.inOut",
+          }, 0.08)
+          .fromTo(mediaTitle, {
+            clipPath: "inset(0 100% 0 0)",
+            x: -12,
+          }, {
+            clipPath: "inset(0 0% 0 0)",
+            x: 0,
+            duration: 0.85,
+            ease: "power3.out",
+          }, 0.58)
+          .fromTo(bottom, { opacity: 0, y: 20 }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          }, 0.48);
+      });
+
+      const footerTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: `.${s.footer}`,
+          start: "top 78%",
+          once: true,
+        },
+      });
+
+      footerTimeline
+        .fromTo(
+          `.${s.footerChar}`,
+          { opacity: 0, y: 12, rotate: 5 },
+          {
+            opacity: 1,
+            y: 0,
+            rotate: 0,
+            duration: 0.22,
+            stagger: 0.032,
+            ease: "power2.out",
+          },
+        )
+        .fromTo(
+          `.${s.footer} a`,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+          "-=0.18",
+        );
+    }, section);
+
+    return () => context.revert();
   }, []);
 
-  const selectProject = useCallback((index: number) => {
-    setCurrent(index);
-    playSound("switch");
-  }, [playSound]);
-
   return (
-    <section id="projects" className={s.section}>
-      <div className={s.heading}>
-        <span>selected work</span>
-        <h2>Work</h2>
-      </div>
-
-      <div className={s.layout}>
-        <nav className={s.list} aria-label="Selected projects">
-          {PROJECTS.map((item, index) => (
-            <button
-              key={item.title}
-              type="button"
-              className={`${s.row}${index === current ? ` ${s.active}` : ""}`}
-              onClick={() => selectProject(index)}
-              onPointerEnter={(event) => {
-                if (event.pointerType === "mouse" && index !== current) selectProject(index);
-              }}
-              data-sound="off"
-            >
-              <span className={s.index}>{pad(index + 1)}</span>
-              <span className={s.title}>{item.title}</span>
-              <span className={s.year}>{item.year}</span>
-            </button>
-          ))}
-        </nav>
-
-        <Link
-          href={project.link}
-          className={s.preview}
-          onClick={() => playSound("longclick")}
-        >
-          <span className={s.corner} aria-hidden="true" />
-          <Image
-            key={project.src}
-            src={project.src}
-            alt={`${project.title} project preview`}
-            fill
-            className={s.image}
-            sizes="(max-width: 900px) 92vw, 44vw"
-            priority={current === 0}
-          />
-          <div className={s.caption}>
-            <span>{pad(current + 1)} / {pad(PROJECTS.length)}</span>
-            <span>{project.role}</span>
-          </div>
-        </Link>
-
-        <div className={s.note} aria-hidden="true">
-          <span>{project.title}</span>
-          <span>{project.year}</span>
+    <section ref={sectionRef} id="projects" className={s.section}>
+      <header className={s.heading}>
+        <h2>Projects</h2>
+        <div className={s.headingMeta}>
+          <span>{projects.length} selected projects</span>
+          <Link href="/archive" className={s.moreProjectsLink}>
+            <span>More projects</span>
+            <PixelArrowUpRight className={s.moreProjectsArrow} />
+          </Link>
         </div>
+      </header>
+
+      <div className={s.projectList}>
+        {projects.map((project, index) => (
+          <Link
+            href={`/case/${project.slug}`}
+            key={project.slug}
+            className={s.project}
+            onClick={() =>
+              window.dispatchEvent(
+                new CustomEvent("sound-play", { detail: { sound: "longclick" } }),
+              )
+            }
+          >
+            <div className={s.projectTop}>
+              <div className={s.identity}>
+                <h3>{project.title}</h3>
+                <span>{project.category}</span>
+              </div>
+              <span className={s.jump}>Jump to project</span>
+            </div>
+
+            <div className={s.media}>
+              <Image
+                src={PREVIEWS[index]}
+                alt={`${project.title} website preview`}
+                fill
+                className={s.image}
+                sizes="(max-width: 800px) 100vw, 94vw"
+                priority={index === 0}
+              />
+              <span className={s.mediaTitle} aria-hidden="true">
+                {project.title}
+              </span>
+            </div>
+
+            <div className={s.projectBottom}>
+              <span className={s.arrow}>↗</span>
+              <div className={s.data}>
+                <div>
+                  <span>Project time</span>
+                  <strong>{project.duration}</strong>
+                </div>
+                <div>
+                  <span>Project field</span>
+                  <strong>{project.category}</strong>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
+
+      <footer className={s.footer}>
+        <p aria-label={FOOTER_TEXT}>
+          {FOOTER_TEXT.split(" ").map((word, wordIndex) => (
+            <span key={`${word}-${wordIndex}`} className={s.footerWord} aria-hidden="true">
+              {Array.from(word).map((character, characterIndex) => (
+                <span key={`${character}-${characterIndex}`} className={s.footerChar}>
+                  {character}
+                </span>
+              ))}
+            </span>
+          ))}
+        </p>
+        <Link href="/archive" className={s.archiveLink}>
+          <span>Explore the archive</span>
+          <PixelArrowUpRight className={s.archiveArrow} />
+        </Link>
+      </footer>
     </section>
   );
 }

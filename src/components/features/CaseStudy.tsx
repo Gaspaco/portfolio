@@ -3,343 +3,194 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "@/lib/projects";
-import Navbar from "../layout/Navbar";
 import s from "./CaseStudy.module.scss";
 
+const projectsIndex = (slug: string) => ["aria", "melograph", "museum"].indexOf(slug);
+
 export default function CaseStudy({ project, nextProject }: { project: Project; nextProject: Project }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const heroMetaRef = useRef<HTMLDivElement>(null);
-  const curtainRef = useRef<HTMLDivElement>(null);
-  const curtain2Ref = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const root = useRef<HTMLElement>(null);
+  const hero = useRef<HTMLElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
+      gsap.timeline({ defaults: { ease: "power4.out" } })
+        .from(`.${s.heroMedia}`, { clipPath: "inset(0 0 0 100%)", duration: 1.45 }, 0.12)
+        .from(`.${s.heroImage}`, { scale: 1.12, duration: 1.8 }, 0.18)
+        .from(`.${s.heroTitle} span`, { yPercent: 110, duration: 1.1, stagger: 0.08 }, 0.45)
+        .from(`.${s.heroBridge}`, { scale: 0.72, rotate: -8, opacity: 0, duration: 0.85 }, 0.88);
 
-      // Curtain wipe on enter — two panels slide up sequentially
-      const curtainTl = gsap.timeline();
-      curtainTl
-        .set([curtainRef.current, curtain2Ref.current], { yPercent: 0 })
-        .to(curtainRef.current, { yPercent: -100, duration: 0.9, ease: "power4.inOut" })
-        .to(curtain2Ref.current, { yPercent: -100, duration: 0.7, ease: "power3.inOut" }, "-=0.5");
-
-      // Hero entrance — starts after curtain opens
-      const heroTl = gsap.timeline({ delay: 0.4 });
-      heroTl
-        .fromTo(".hero-img",
-          { scale: 1.15 },
-          { scale: 1.0, duration: 1.8, ease: "power2.out" }
-        )
-        .fromTo(heroMetaRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-          "-=1"
-        )
-        .fromTo(titleRef.current,
-          { y: 80, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, ease: "power4.out" },
-          "-=0.6"
-        );
-
-      // Hero parallax on scroll
-      gsap.to(".hero-img", {
-        yPercent: 20,
-        ease: "none",
-        scrollTrigger: { trigger: heroRef.current, start: "top top", end: "bottom top", scrub: true },
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
+        gsap.from(element, {
+          y: 50,
+          opacity: 0,
+          duration: 0.9,
+          ease: "power4.out",
+          scrollTrigger: { trigger: element, start: "top 88%", once: true },
+        });
       });
 
-      // Clip-path reveal for sections
-      gsap.utils.toArray<HTMLElement>(".cr-clip").forEach((el) => {
-        gsap.fromTo(el,
-          { clipPath: "inset(0 0 100% 0)" },
-          {
-            clipPath: "inset(0 0 0% 0)",
-            duration: 1,
-            ease: "power4.out",
-            scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none none" },
-          }
-        );
+      gsap.utils.toArray<HTMLElement>("[data-image]").forEach((element) => {
+        gsap.from(element, {
+          clipPath: "inset(8% 0 8% 0)",
+          scale: 0.96,
+          duration: 1.2,
+          ease: "power4.out",
+          scrollTrigger: { trigger: element, start: "top 82%", once: true },
+        });
       });
 
-      // Fade + slide up for text blocks
-      gsap.utils.toArray<HTMLElement>(".cr").forEach((el) => {
-        gsap.fromTo(el,
-          { y: 40, opacity: 0 },
-          {
-            y: 0, opacity: 1, duration: 0.9, ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 88%", toggleActions: "play none none none" },
-          }
-        );
+      gsap.from(`.${s.deviceLaptop}`, {
+        y: 110,
+        scale: 0.82,
+        rotateX: 13,
+        duration: 1.35,
+        ease: "power4.out",
+        scrollTrigger: { trigger: `.${s.deviceStage}`, start: "top 78%", once: true },
       });
-
-      // Stagger for process steps
-      gsap.fromTo(".process-step",
-        { x: -30, opacity: 0 },
-        {
-          x: 0, opacity: 1, duration: 0.7, stagger: 0.12, ease: "power3.out",
-          scrollTrigger: { trigger: ".process-section", start: "top 80%", toggleActions: "play none none none" },
-        }
-      );
-
-      // Result cards stagger
-      gsap.fromTo(".result-card",
-        { y: 50, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out",
-          scrollTrigger: { trigger: ".results-section", start: "top 80%", toggleActions: "play none none none" },
-        }
-      );
-
-      // Quote word-by-word reveal
-      const quoteEl = document.querySelector(".quote-text");
-      if (quoteEl) {
-        const words = quoteEl.textContent?.split(" ") ?? [];
-        quoteEl.innerHTML = words.map(w => `<span class="inline-block overflow-hidden"><span class="inline-block quote-word">${w}</span></span>`).join(" ");
-        gsap.fromTo(".quote-word",
-          { y: "100%" },
-          {
-            y: "0%", duration: 0.8, stagger: 0.04, ease: "power3.out",
-            scrollTrigger: { trigger: quoteEl, start: "top 80%", toggleActions: "play none none none" },
-          }
-        );
-      }
-
-      // Horizontal line draw
-      gsap.utils.toArray<HTMLElement>(".line-draw").forEach((el) => {
-        gsap.fromTo(el,
-          { scaleX: 0 },
-          {
-            scaleX: 1, duration: 1.2, ease: "power3.inOut", transformOrigin: "left",
-            scrollTrigger: { trigger: el, start: "top 90%", toggleActions: "play none none none" },
-          }
-        );
-      });
-
-    }, containerRef);
-
+    }, root);
     return () => ctx.revert();
   }, []);
 
   return (
-    <main ref={containerRef} className={s.main}>
-      {/* Page transition curtains */}
-      <div ref={curtainRef} className={s.curtain1} />
-      <div ref={curtain2Ref} className={s.curtain2} />
-
-      <Navbar />
-
-      {/* ── HERO ── */}
-      <section ref={heroRef} className={s.hero}>
-        <Image src={project.src} alt={project.title} fill className={`${s.heroImg} hero-img`} priority />
-        <div className={s.heroGradient} />
-
-        {/* Back */}
-        <button onClick={() => router.back()} className={s.backBtn}>
-          <svg className={s.backArrow} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-          Back
-        </button>
-
-        <div className={s.heroBottom}>
-          <div ref={heroMetaRef} className={s.heroMeta}>
-            <span className={s.pulseDot} />
-            <span className={s.metaCategory}>{project.category}</span>
-            <span className={s.metaDivider}>&middot;</span>
-            <span className={s.metaYear}>{project.year}</span>
-          </div>
-          <h1 ref={titleRef} className={s.heroTitle}>
-            {project.title}
-          </h1>
+    <main ref={root} className={s.main}>
+      <section ref={hero} className={s.hero}>
+        <div className={s.heroMedia}>
+          <Image
+            src={project.caseHero ?? project.src}
+            alt={`${project.title} project cover`}
+            fill
+            className={`${s.heroImage} ${project.caseHero ? s.heroMockup : ""}`}
+            priority
+          />
+          <div className={s.heroShade} />
+          <span className={s.frameIndex}>{project.year}</span>
         </div>
+        <div className={s.heroRail}>
+          <Link href="/archive" className={s.back}>
+            <svg className={s.backArrow} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20 11v2H4v-2zM8 13v2H6v-2zm2 2v2H8v-2zm2 2v2h-2v-2zm-4-6V9H6v2z" />
+              <path d="M10 15V7H8v8zm2 2V5h-2v12z" />
+            </svg>
+            <span>All projects</span>
+          </Link>
+          <h1 className={s.heroTitle} aria-label={project.title}>
+            {Array.from(project.title).map((character, index) => (
+              <span key={`${character}-${index}`} aria-hidden="true">{character === " " ? "\u00A0" : character}</span>
+            ))}
+          </h1>
+          <p className={s.heroSummary}>{project.description}</p>
+        </div>
+        <div className={s.heroBridge} aria-hidden="true">
+          <span>Selected work</span>
+          <strong>{String(projectsIndex(project.slug) + 1).padStart(2, "0")}</strong>
+        </div>
+        <a className={s.scrollCue} href="#project-intro">
+          <span>Explore the case</span><i aria-hidden="true">↓</i>
+        </a>
       </section>
 
-      {/* ── INTRO STRIP ── */}
-      <section className={s.introStrip}>
-        <div className={s.introFlex}>
-          <p className={`${s.introText} cr`}>
-            {project.description}
-          </p>
-          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
-            className={`${s.ctaLink} cr`}>
-            <div className={s.ctaFill} />
-            <span className={s.ctaText}>
-              Visit Live Site ↗
-            </span>
+      <section id="project-intro" className={s.intro}>
+        <p className={s.index}>Selected work / {project.year}</p>
+        <div className={s.introMain} data-reveal>
+          <h2>{project.description}</h2>
+          <a href={project.liveUrl} target="_blank" rel="noreferrer" className={s.liveLink}>
+            Visit live project <span>↗</span>
           </a>
         </div>
+        <dl className={s.meta} data-reveal>
+          <div><dt>Role</dt><dd>{project.role}</dd></div>
+          <div><dt>Timeline</dt><dd>{project.duration}</dd></div>
+          <div><dt>Services</dt><dd>{project.technologies.join(", ")}</dd></div>
+        </dl>
       </section>
 
-      {/* ── META ROW ── */}
-      <section className={s.metaSection}>
-        <div className={`${s.metaGrid} cr`}>
-          {[
-            { label: "Role", value: project.role },
-            { label: "Duration", value: project.duration },
-            { label: "Year", value: project.year },
-          ].map(({ label, value }) => (
-            <div key={label}>
-              <span className={s.metaLabel}>{label}</span>
-              <span className={s.metaValue}>{value}</span>
-            </div>
+      <section className={s.statement}>
+        <p data-reveal>{project.longDescription}</p>
+      </section>
+
+      <section className={s.deviceStage} aria-label={`${project.title} desktop presentation`}>
+        <div className={s.deviceCaption}><span>DESKTOP EXPERIENCE</span><span>01 / RESPONSIVE BUILD</span></div>
+        <div className={s.deviceIntro} data-reveal>
+          <span>Desktop experience</span>
+          <p>The interface in motion,<br />shown where it was built to live.</p>
+        </div>
+        <div className={s.deviceLaptop}>
+          <div className={s.laptopScreen}>
+            <Image src={project.images[0]} alt={`${project.title} website preview`} fill sizes="(max-width: 768px) 94vw, 78vw" className={s.laptopPoster} />
+            <video src={`/case-${project.slug}.webm`} poster={project.images[0]} aria-label={`${project.title} website interaction preview`} autoPlay muted loop playsInline preload="metadata" />
+          </div>
+          <Image src="/macbook-pro-16-modern.avif" alt="" fill sizes="(max-width: 768px) 110vw, 92vw" className={s.laptopFrame} aria-hidden="true" />
+        </div>
+      </section>
+
+      <section className={s.story}>
+        <div className={s.storyBlock} data-reveal>
+          <p className={s.storyLabel}>The challenge</p>
+          <h2>Making the experience feel inevitable.</h2>
+          <p>{project.challenge}</p>
+        </div>
+        <div className={`${s.storyBlock} ${s.storyBlockRight}`} data-reveal>
+          <p className={s.storyLabel}>The response</p>
+          <h2>One clear system, built around the content.</h2>
+          <p>{project.solution}</p>
+        </div>
+      </section>
+
+      <section className={s.process}>
+        <header data-reveal>
+          <p>From direction to delivery</p>
+          <h2>The work behind<br />the final frame.</h2>
+        </header>
+        <ol>
+          {project.process.map((item, index) => (
+            <li key={item.step} data-reveal>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{item.step}</h3>
+              <p>{item.detail}</p>
+            </li>
           ))}
-          <div>
-            <span className={s.metaLabel}>Stack</span>
-            <div className={s.techTags}>
-              {project.technologies.map((tech) => (
-                <span key={tech} className={s.techTag}>
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+        </ol>
       </section>
 
-      {/* ── OVERVIEW ── */}
-      <section className={s.overviewSection}>
-        <div className={s.overviewInner}>
-          <div className={`${s.overviewLabel} cr-clip`}>
-            <span className={s.overviewLabelText}>Overview</span>
-          </div>
-          <p className={`${s.overviewText} cr`}>
-            {project.longDescription}
-          </p>
-        </div>
+      <section className={s.visualPair}>
+        <figure className={s.visualTall} data-image>
+          <Image src={project.images[1] ?? project.src} alt={`${project.title} detail view`} fill sizes="(max-width: 768px) 100vw, 58vw" />
+        </figure>
+        <blockquote data-reveal>
+          <span>“</span>
+          <p>{project.quote}</p>
+        </blockquote>
       </section>
 
-      {/* ── CHALLENGE / SOLUTION ── */}
-      <section className={s.splitSection}>
-        <div className={s.splitGrid}>
-          <div className={s.splitLeft}>
-            <div className={`${s.splitHeader} cr`}>
-              <span className={s.splitNumber}>01</span>
-              <span className={s.splitLabel}>Challenge</span>
-            </div>
-            <p className={`${s.splitText} cr`}>{project.challenge}</p>
-          </div>
-          <div className={s.splitRight}>
-            <div className={`${s.splitHeader} cr`}>
-              <span className={s.splitNumber}>02</span>
-              <span className={s.splitLabel}>Solution</span>
-            </div>
-            <p className={`${s.splitText} cr`}>{project.solution}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROCESS ── */}
-      <section className={`${s.processSection} process-section`}>
-        <div className={s.processHeader}>
-          <span className={s.processLabel}>Process</span>
-          <div className={`${s.lineDraw} line-draw`} />
-        </div>
-        <div className={s.processGrid}>
-          {project.process.map((item, i) => (
-            <div key={i} className={`${s.processStep} process-step`}>
-              <div className={s.stepHeader}>
-                <span className={s.stepNum}>0{i + 1}</span>
-                <span className={s.stepTitle}>{item.step}</span>
-              </div>
-              <p className={s.stepDetail}>{item.detail}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── QUOTE HIGHLIGHT ── */}
-      <section className={s.quoteSection}>
-        <div className={s.quoteGrain}
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-        />
-        <p className={`${s.quoteText} quote-text`}>
-          {project.quote}
-        </p>
-        <div className={s.quoteAttribution}>
-          <div className={s.quoteLine} />
-          <span className={s.quoteSource}>{project.title} — {project.year}</span>
-        </div>
-      </section>
-
-      {/* ── RESULTS ── */}
-      <section className={`${s.resultsSection} results-section`}>
-        <div className={`${s.resultsHeader} cr`}>
-          <span className={s.resultsLabel}>Results</span>
-          <div className={`${s.lineDraw} line-draw`} />
-        </div>
-
-        {project.results.map((result, i) => (
-          <div
-            key={i}
-            className={`${i % 2 === 1 ? s.resultCardAlt : s.resultCard} result-card`}
-          >
-            {/* Sliding bg on hover */}
-            <div className={s.resultHoverBg} />
-
-            <div className={i % 2 === 1 ? s.resultContentAlt : s.resultContent}>
-              <span className={s.resultNum}>
-                0{i + 1}
-              </span>
-              <p className={s.resultText}>
-                {result}
-              </p>
-              {/* Underline draws on hover */}
-              <div className={i % 2 === 1 ? s.resultUnderlineAlt : s.resultUnderline} />
-            </div>
+      <section className={s.outcomes}>
+        <p className={s.outcomeLabel}>What shipped</p>
+        {project.results.map((result, index) => (
+          <div className={s.outcome} key={result} data-reveal>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <p>{result}</p>
           </div>
         ))}
       </section>
 
-      {/* ── NEXT PROJECT ── */}
-      <Link href={`/case/${nextProject.slug}`} className={s.nextProject}>
-        {/* Grain */}
-        <div className={s.nextGrain}
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-        />
-
-        {/* Gold fill wipe */}
-        <div className={s.nextGoldWipe} />
-
-        {/* Label */}
-        <span className={s.nextLabel}>
-          Next Case
-        </span>
-
-        {/* Big title */}
-        <div className={s.nextTitleWrap}>
-          <h2 className={s.nextTitle}>
-            {nextProject.title}
-          </h2>
-        </div>
-
-        {/* Category + arrow */}
-        <div className={s.nextMeta}>
-          <span className={s.nextCategory}>
-            {nextProject.category}
-          </span>
-          <div className={s.nextArrowWrap}>
-            <svg className={s.nextArrow} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </div>
-        </div>
+      <Link href={`/case/${nextProject.slug}`} className={s.next}>
+        <Image src={nextProject.src} alt="" fill sizes="100vw" className={s.nextImage} />
+        <div className={s.nextShade} />
+        <span className={s.nextLabel}>Next project</span>
+        <h2>{nextProject.title}</h2>
+        <span className={s.nextArrow}>↗</span>
       </Link>
 
-      {/* Footer */}
-      <div className={s.footer}>
-        <span className={s.footerText}>Niko — {new Date().getFullYear()}</span>
-        <a href="mailto:nikodima2007@gmail.com" className={s.footerLink}>
-          nikodima2007@gmail.com
-        </a>
-      </div>
+      <footer className={s.footer}>
+        <span>Niko © {new Date().getFullYear()}</span>
+        <a href="mailto:nikodima2007@gmail.com">Start a project ↗</a>
+      </footer>
     </main>
   );
 }

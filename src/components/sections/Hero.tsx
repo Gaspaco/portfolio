@@ -5,14 +5,14 @@ import gsap from "gsap";
 import s from "./Hero.module.scss";
 
 const CHARS = "$@B%8&WM#ZO0QCJYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-const CELL_SIZE = 7;
+const CELL_SIZE = 9;
+const FRAME_INTERVAL = 1000 / 24;
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMuted, setIsMuted] = useState(false);
   const [cameraFailed, setCameraFailed] = useState(false);
 
   useEffect(() => {
@@ -62,10 +62,14 @@ export default function Hero() {
     let raf = 0;
     let stream: MediaStream | null = null;
     let disposed = false;
+    let visible = true;
+    let lastFrame = 0;
+    let sampleCols = 0;
+    let sampleRows = 0;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       canvas.width = Math.max(1, Math.floor(rect.width * dpr));
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
     };
@@ -81,9 +85,19 @@ export default function Hero() {
       ctx.fillText(message, width / 2, height / 2);
     };
 
-    const draw = () => {
+    const draw = (time = 0) => {
+      if (!visible || document.hidden) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+      if (time - lastFrame < FRAME_INTERVAL) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = time;
+
       const { width, height } = canvas;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const cols = Math.max(1, Math.floor(width / (CELL_SIZE * dpr)));
       const rows = Math.max(1, Math.floor(height / (CELL_SIZE * dpr)));
       const cellW = width / cols;
@@ -93,8 +107,12 @@ export default function Hero() {
       ctx.fillRect(0, 0, width, height);
 
       if (video.readyState >= 2) {
-        sample.width = cols;
-        sample.height = rows;
+        if (cols !== sampleCols || rows !== sampleRows) {
+          sample.width = cols;
+          sample.height = rows;
+          sampleCols = cols;
+          sampleRows = rows;
+        }
 
         sampleCtx.save();
         sampleCtx.translate(cols, 0);
@@ -121,6 +139,7 @@ export default function Hero() {
         const data = sampleCtx.getImageData(0, 0, cols, rows).data;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+        ctx.font = `${cellH * 1.08}px monospace`;
 
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < cols; col++) {
@@ -134,7 +153,6 @@ export default function Hero() {
             const x = col * cellW + cellW / 2;
             const y = row * cellH + cellH / 2;
 
-            ctx.font = `${cellH * 1.08}px monospace`;
             ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.fillText(char, x, y);
           }
@@ -146,6 +164,13 @@ export default function Hero() {
 
     resize();
     window.addEventListener("resize", resize);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+      },
+      { rootMargin: "100px" },
+    );
+    observer.observe(canvas);
 
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       setCameraFailed(true);
@@ -154,6 +179,7 @@ export default function Hero() {
         disposed = true;
         cancelAnimationFrame(raf);
         window.removeEventListener("resize", resize);
+        observer.disconnect();
       };
     }
 
@@ -185,25 +211,10 @@ export default function Hero() {
       disposed = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      observer.disconnect();
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-
-  useEffect(() => {
-    setIsMuted(window.localStorage.getItem("sound-muted") === "1");
-
-    const handleMutedChange = (event: Event) => {
-      const customEvent = event as CustomEvent<{ muted: boolean }>;
-      setIsMuted(customEvent.detail.muted);
-    };
-
-    window.addEventListener("sound-muted-change", handleMutedChange);
-    return () => window.removeEventListener("sound-muted-change", handleMutedChange);
-  }, []);
-
-  const toggleSound = () => {
-    window.dispatchEvent(new CustomEvent("sound-toggle"));
-  };
 
   return (
     <section ref={sectionRef} className={s.section}>
@@ -233,13 +244,16 @@ export default function Hero() {
         </h1>
       </div>
 
-      <div ref={imageRef} className={s.imageContainer}>
-        <div className={s.effectFrame} aria-label={cameraFailed ? "Camera unavailable" : "Live camera ascii effect"}>
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video ref={videoRef} className={s.hiddenVideo} playsInline muted autoPlay />
-          <canvas ref={canvasRef} className={s.effectCanvas} />
-          <div className={s.effectGrain} aria-hidden="true" />
+      <div className={s.mediaShell}>
+        <div ref={imageRef} className={s.imageContainer}>
+          <div className={s.effectFrame} aria-label={cameraFailed ? "Camera unavailable" : "Live camera ascii effect"}>
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <video ref={videoRef} className={s.hiddenVideo} playsInline muted autoPlay />
+            <canvas ref={canvasRef} className={s.effectCanvas} />
+            <div className={s.effectGrain} aria-hidden="true" />
+          </div>
         </div>
+
       </div>
 
       <div className={`${s.nameWrap} hero-name`}>
@@ -259,27 +273,6 @@ export default function Hero() {
         ))}
       </div>
 
-      <button
-        type="button"
-        className={s.soundButton}
-        onClick={toggleSound}
-        aria-pressed={!isMuted}
-        aria-label={isMuted ? "Turn sound on" : "Mute sound"}
-        data-sound={isMuted ? "switch" : "close"}
-      >
-        <span className={s.soundLabel}>
-          <span className={s.soundLabelText}>{isMuted ? "sound off" : "sound on"}</span>
-          <span className={s.soundLabelClone}>{isMuted ? "sound off" : "sound on"}</span>
-        </span>
-
-        <span className={s.soundCircle}>
-          <span className={s.soundBars} aria-hidden="true">
-            <span className={isMuted ? s.barMuted : undefined} />
-            <span className={isMuted ? s.barMuted : undefined} />
-            <span className={isMuted ? s.barMuted : undefined} />
-          </span>
-        </span>
-      </button>
     </section>
   );
 }

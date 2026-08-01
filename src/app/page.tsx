@@ -2,8 +2,11 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/Hero";
+import IntroStatement from "@/components/sections/IntroStatement";
 import CraftBuild from "@/components/sections/CraftBuild";
+import About from "@/components/sections/About";
 import Projects from "@/components/sections/Projects";
+import Contact from "@/components/sections/Contact";
 import LoadingAnimations from "@/components/ui/LoadingAnimations";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import { useEffect, useState } from "react";
@@ -26,13 +29,16 @@ export default function Home() {
 
   return (
     <SmoothScroll>
-      <main className={s.main}>
+      <main id="top" className={s.main}>
         {isLoading && <LoadingAnimations onComplete={handleLoadComplete} />}
 
         <Navbar />
         <Hero />
+        <IntroStatement />
         <CraftBuild />
+        <About />
         <Projects />
+        <Contact />
       </main>
     </SmoothScroll>
   );

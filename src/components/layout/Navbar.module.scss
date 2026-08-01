@@ -2,7 +2,7 @@
 
 // ─── Nav ───
 .nav {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -61,25 +61,100 @@
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+}
+
+.controlDock {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.soundButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--c-dark-5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.045);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition:
+    color 300ms ease,
+    background-color 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.soundButton:hover {
+  border-color: var(--c-dark-5);
+  background: var(--c-dark-5);
+  color: var(--c-white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.065);
+}
+
+.soundText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.soundBars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 13px;
+  height: 13px;
+
+  span {
+    display: block;
+    width: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transform-origin: bottom;
+    animation: soundPulse 1.1s ease-in-out infinite;
+  }
+
+  span:nth-child(1) { height: 6px; }
+  span:nth-child(2) { height: 12px; animation-delay: 140ms; }
+  span:nth-child(3) { height: 8px; animation-delay: 280ms; }
+}
+
+.barMuted {
+  animation: none !important;
+  transform: scaleY(0.3);
+  opacity: 0.45;
 }
 
 .menuButton {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
+  gap: 0.65rem;
+  height: 3rem;
   cursor: pointer;
-  padding: 0.4rem 0.4rem 0.4rem 1.15rem;
-  border-radius: 9999px;
+  padding: 0.25rem 0.25rem 0.25rem 0.9rem;
   border: 1px solid rgba(17, 17, 17, 0.14);
-  background-color: transparent;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.045);
+  backdrop-filter: blur(14px);
   transition:
-    background-color var(--duration-base) var(--ease-in-out),
-    border-color var(--duration-base) var(--ease-in-out);
+    background-color 350ms var(--ease-smooth),
+    border-color 350ms var(--ease-smooth),
+    box-shadow 350ms var(--ease-smooth),
+    color var(--duration-base) var(--ease-in-out);
 
   &:hover {
-    background-color: var(--c-dark-5);
     border-color: var(--c-dark-5);
+    background: var(--c-dark-5);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.065);
   }
 
   &:hover .menuLabelText {
@@ -104,6 +179,36 @@
   }
 }
 
+.menuButton:hover .menuLabelText,
+.controlDock[data-open="true"] .menuLabelText {
+  color: var(--c-white);
+}
+
+.menuButton:hover .circle,
+.controlDock[data-open="true"] .circle {
+  background-color: var(--c-white);
+}
+
+.menuButton:hover .hamburgerLine,
+.controlDock[data-open="true"] .hamburgerLine {
+  background-color: var(--c-dark-5);
+}
+
+.controlDock[data-open="true"] .menuButton {
+  background: var(--c-dark-5);
+}
+
+@keyframes soundPulse {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soundBars span {
+    animation: none;
+  }
+}
+
 // ─── Menu label text ───
 .menuLabel {
   position: relative;
@@ -116,8 +221,8 @@
 .menuLabelText {
   display: block;
   color: var(--c-dark-5);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.9rem;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
   text-transform: none;
@@ -134,8 +239,8 @@
   align-items: center;
   height: 100%;
   color: var(--c-white);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.9rem;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
   text-transform: none;
@@ -150,8 +255,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 9999px;
   background-color: var(--c-dark-5);
   transition: background-color var(--duration-base) var(--ease-in-out);

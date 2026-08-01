@@ -1,251 +1,174 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Navbar from "@/components/layout/Navbar";
 import { projects } from "@/lib/projects";
 import s from "./Archive.module.scss";
 
+gsap.registerPlugin(ScrollTrigger);
+
+const previews = [
+  "/project-aria-new.jpg",
+  "/project-melograph-red.png",
+  "/museum.png",
+];
+
+const palettes = [s.aria, s.melograph, s.museum];
+
 export default function Archive() {
-  const router = useRouter();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const floatWrapRef = useRef<HTMLDivElement>(null);
-  const floatBounceRef = useRef<HTMLDivElement>(null);
-  const curtainRef = useRef<HTMLDivElement>(null);
-  const curtain2Ref = useRef<HTMLDivElement>(null);
-  const [activeProject, setActiveProject] = useState<number | null>(null);
-  const prevIndex = useRef<number | null>(null);
-  const isHovering = useRef(false);
+  const pageRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+  useLayoutEffect(() => {
+    const page = pageRef.current;
+    if (!page || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const ctx = gsap.context(() => {
-      // Curtain entrance
-      gsap.timeline()
-        .set([curtainRef.current, curtain2Ref.current], { yPercent: 0 })
-        .to(curtainRef.current, { yPercent: -100, duration: 0.9, ease: "power4.inOut" })
-        .to(curtain2Ref.current, { yPercent: -100, duration: 0.7, ease: "power3.inOut" }, "-=0.5");
+    const context = gsap.context(() => {
+      const load = gsap.timeline({ defaults: { ease: "power4.out" } });
+      load
+        .fromTo(`.${s.archiveTitle}`, { yPercent: 115, rotate: 3 }, {
+          yPercent: 0,
+          rotate: 0,
+          duration: 1,
+        })
+        .fromTo(`.${s.introCopy} > *`, { y: 24, opacity: 0 }, {
+          y: 0,
+          opacity: 1,
+          duration: 0.65,
+          stagger: 0.08,
+        }, "-=0.55")
+        .fromTo(`.${s.scrollCue}`, { opacity: 0, y: 12 }, {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+        }, "-=0.3");
 
-      // Header
-      gsap.fromTo(".archive-title",
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.5 }
-      );
-      gsap.fromTo(".archive-meta",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.8, ease: "power2.out", delay: 0.9 }
-      );
+      gsap.utils.toArray<HTMLElement>(`.${s.project}`).forEach((project) => {
+        const visual = project.querySelector(`.${s.visual}`);
+        const copy = project.querySelectorAll(`.${s.projectCopy} > *`);
+        const index = project.querySelector(`.${s.index}`);
 
-      // Divider line draw
-      gsap.fromTo(".header-line",
-        { scaleX: 0 },
-        { scaleX: 1, duration: 1.2, ease: "power3.inOut", transformOrigin: "left", delay: 0.7 }
-      );
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: project,
+            start: "top 72%",
+            once: true,
+          },
+        });
 
-      // Rows stagger in
-      gsap.fromTo(".project-row",
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out", delay: 0.8 }
-      );
-
-      // Title masked reveal per row
-      gsap.utils.toArray<HTMLElement>(".archive-row-title").forEach((el) => {
-        gsap.fromTo(el,
-          { y: "110%" },
-          {
-            y: "0%",
-            duration: 1.2,
-            ease: "power4.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
+        timeline
+          .fromTo(index, { opacity: 0, y: 28 }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            ease: "power3.out",
+          })
+          .fromTo(visual, { clipPath: "inset(0 0 100% 0)" }, {
+            clipPath: "inset(0 0 0% 0)",
+            duration: 1,
+            ease: "power4.inOut",
+          }, 0.05)
+          .fromTo(copy, { opacity: 0, y: 30 }, {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.07,
+            ease: "power3.out",
+          }, 0.42);
       });
+    }, page);
 
-      // Start all slides off-screen
-      if (floatBounceRef.current) {
-        gsap.set(floatBounceRef.current.querySelectorAll(".archive-slide"), { yPercent: 100 });
-      }
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // Spring cursor follow with bounce rotation
-  useEffect(() => {
-    const wrap = floatWrapRef.current;
-    const bounce = floatBounceRef.current;
-    if (!wrap || !bounce) return;
-
-    const xTo = gsap.quickTo(wrap, "left", { duration: 0.4, ease: "power3.out" });
-    const yTo = gsap.quickTo(wrap, "top", { duration: 0.4, ease: "power3.out" });
-    const rotTo = gsap.quickTo(bounce, "rotate", { duration: 0.5, ease: "elastic.out(1, 0.5)" });
-
-    let prevX = 0;
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isHovering.current) return;
-      const dx = e.clientX - prevX;
-      prevX = e.clientX;
-      xTo(e.clientX - 240);
-      yTo(e.clientY - 150);
-      rotTo(dx * 0.15);
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    return () => window.removeEventListener("mousemove", onMouseMove);
-  }, []);
-
-  const handleEnter = useCallback((i: number) => {
-    const prev = prevIndex.current;
-    prevIndex.current = i;
-    setActiveProject(i);
-    isHovering.current = true;
-    gsap.to(floatWrapRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
-
-    const slides = floatBounceRef.current?.querySelectorAll(".archive-slide");
-    if (!slides) return;
-
-    const direction = prev !== null && i > prev ? 1 : -1;
-
-    slides.forEach((slide, idx) => {
-      if (idx === i) {
-        gsap.fromTo(slide, { yPercent: direction * 100 }, { yPercent: 0, duration: 0.5, ease: "power3.out" });
-      } else if (idx === prev) {
-        gsap.to(slide, { yPercent: direction * -100, duration: 0.5, ease: "power3.out" });
-      }
-    });
-  }, []);
-
-  const handleLeave = useCallback(() => {
-    setActiveProject(null);
-    isHovering.current = false;
-    gsap.to(floatWrapRef.current, { opacity: 0, scale: 0.9, duration: 0.3, ease: "power2.in" });
+    return () => context.revert();
   }, []);
 
   return (
-    <main ref={containerRef} className={s.container}>
-      {/* Curtains */}
-      <div ref={curtainRef} className={s.curtain1} />
-      <div ref={curtain2Ref} className={s.curtain2} />
+    <main ref={pageRef} className={s.page}>
+      <header className={s.hero}>
+        <Link href="/" className={s.backLink}>
+          <svg className={s.backTopArrow} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20 11v2H4v-2zM8 13v2H6v-2zm2 2v2H8v-2zm2 2v2h-2v-2zm-4-6V9H6v2z" />
+            <path d="M10 15V7H8v8zm2 2V5h-2v12z" />
+          </svg>
+          <span>Back home</span>
+        </Link>
 
-      {/* Grain */}
-      <div className={s.grain}
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-      />
-
-      <Navbar />
-
-      {/* Floating image — spring cursor follow with directional slide */}
-      <div
-        ref={floatWrapRef}
-        className={s.floatWrap}
-        style={{ opacity: 0, scale: 0.9, top: 0, left: 0 }}
-      >
-        <div ref={floatBounceRef} className={s.floatBounce} style={{ transformOrigin: "center center" }}>
-          {projects.map((p, i) => (
-            <div key={i} className="archive-slide">
-              <Image src={p.src} alt={p.title} fill className="object-cover" sizes="480px" />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Header */}
-      <section className={s.headerSection}>
-        <div className="archive-meta">
-          <span className={s.dot} />
-          <span className={s.label}>Selected Work</span>
-          <span className={s.count}>0{projects.length} Cases</span>
+        <div className={s.titleMask}>
+          <h1 className={s.archiveTitle}>Archive</h1>
         </div>
 
-        <div className={s.titleOverflow}>
-          <h1 className="archive-title">
-            All Projects
-          </h1>
+        <div className={s.introCopy}>
+          <p>Three projects shaped through interface, motion, and code.</p>
+          <div className={s.archiveMeta}>
+            <span>03 selected</span>
+            <span>2025—2026</span>
+          </div>
         </div>
 
-        <div className="header-line" />
-      </section>
+        <span className={s.scrollCue}>Scroll through the work ↓</span>
+      </header>
 
-      {/* Project rows */}
-      <section className={s.projectList}>
-        {projects.map((project, i) => (
-          <Link
-            key={i}
-            href={`/case/${project.slug}`}
-            className="project-row"
-            onMouseEnter={() => handleEnter(i)}
-            onMouseLeave={handleLeave}
+      <section className={s.projectStack} aria-label="All projects">
+        {projects.map((project, index) => (
+          <article
+            key={project.slug}
+            className={`${s.project} ${palettes[index]}`}
           >
-            {/* Gold fill wipe on hover */}
-            <div className={s.goldFill} />
+            <span className={s.index}>0{index + 1}</span>
 
-            {/* Index */}
-            <span className={s.index}>
-              0{i + 1}
-            </span>
+            <Link href={`/case/${project.slug}`} className={s.visual}>
+              <Image
+                src={previews[index]}
+                alt={`${project.title} project preview`}
+                fill
+                className={s.image}
+                sizes="(max-width: 800px) 92vw, 62vw"
+                priority={index === 0}
+              />
+            </Link>
 
-            {/* Title — masked reveal like Featured Cases */}
-            <div className={s.titleWrapper}>
-              {/* Outline layer */}
-              <div className={s.outlineWrap}>
-                <h2
-                  className={`archive-row-title ${s.outlineTitle}`}
-                  style={{ WebkitTextStroke: "2px rgba(255,255,255,0.25)" }}
-                >
-                  {project.title}
-                </h2>
+            <div className={s.projectCopy}>
+              <div className={s.projectMeta}>
+                <span>{project.category}</span>
+                <span>{project.year}</span>
               </div>
-              {/* Solid layer */}
-              <div className={s.solidOverlay}>
-                <h2 className={`archive-row-title ${s.solidTitle}`}>
-                  {project.title}
-                </h2>
+
+              <h2>{project.title}</h2>
+              <p>{project.description}</p>
+
+              <div className={s.technologyList} aria-label="Technologies">
+                {project.technologies.slice(0, 3).map((technology) => (
+                  <span key={technology}>{technology}</span>
+                ))}
               </div>
-            </div>
 
-            {/* Category */}
-            <div className={s.categoryWrapper}>
-              <span className={s.category}>
-                {project.category}
-              </span>
-              <span className={s.year}>
-                {project.year}
-              </span>
+              <Link href={`/case/${project.slug}`} className={s.viewLink}>
+                <span>View project</span>
+                <span className={s.viewArrow} aria-hidden="true">↗</span>
+              </Link>
             </div>
-
-            {/* Arrow */}
-            <div className={s.arrowWrapper}>
-              <svg className={s.arrowSvg} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </div>
-          </Link>
+          </article>
         ))}
       </section>
 
-      {/* Footer */}
-      <div className={s.footer}>
-        <button
-          onClick={() => router.back()}
-          className={s.backButton}
-        >
-          <svg className={s.backArrow} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-          Back
-        </button>
-        <span className={s.footerText}>Niko — 2026</span>
-      </div>
+      <footer className={s.footer}>
+        <Link href="/">
+          <span>Return home</span>
+          <span className={s.returnArrowWindow} aria-hidden="true">
+            <svg
+              className={s.returnArrow}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M20 11v2H4v-2zM8 13v2H6v-2zm2 2v2H8v-2zm2 2v2h-2v-2zm-4-6V9H6v2z" />
+              <path d="M10 15V7H8v8zm2 2V5h-2v12z" />
+            </svg>
+          </span>
+        </Link>
+        <span>Niko, creative developer</span>
+        <span>© 2026</span>
+      </footer>
     </main>
   );
 }

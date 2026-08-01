@@ -57,4 +57,7 @@ $bp-2xl: 1536px;
   --duration-base: 300ms;
   --duration-slow: 500ms;
   --duration-slower: 700ms;
+
+  // Page rhythm
+  --space-section: clamp(4rem, 8vw, 8rem);
 }

@@ -14,12 +14,17 @@ export default function Magnetic({ children }: MagneticProps) {
     const element = magnetic.current;
     if (!element) return;
 
-    const xTo = gsap.quickTo(element, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
-    const yTo = gsap.quickTo(element, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
+    const xTo = gsap.quickTo(element, "x", { duration: 0.65, ease: "elastic.out(1, 0.4)" });
+    const yTo = gsap.quickTo(element, "y", { duration: 0.65, ease: "elastic.out(1, 0.4)" });
+    let bounds = element.getBoundingClientRect();
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const updateBounds = () => {
+      bounds = element.getBoundingClientRect();
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
       const { clientX, clientY } = e;
-      const { height, width, left, top } = element.getBoundingClientRect();
+      const { height, width, left, top } = bounds;
       const x = clientX - (left + width / 2);
       const y = clientY - (top + height / 2);
       
@@ -27,17 +32,21 @@ export default function Magnetic({ children }: MagneticProps) {
       yTo(y * 0.35);
     };
 
-    const handleMouseLeave = () => {
+    const handlePointerLeave = () => {
       xTo(0);
       yTo(0);
     };
 
-    element.addEventListener("mousemove", handleMouseMove);
-    element.addEventListener("mouseleave", handleMouseLeave);
+    element.addEventListener("pointerenter", updateBounds);
+    element.addEventListener("pointermove", handlePointerMove, { passive: true });
+    element.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("resize", updateBounds, { passive: true });
 
     return () => {
-      element.removeEventListener("mousemove", handleMouseMove);
-      element.removeEventListener("mouseleave", handleMouseLeave);
+      element.removeEventListener("pointerenter", updateBounds);
+      element.removeEventListener("pointermove", handlePointerMove);
+      element.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("resize", updateBounds);
     };
   }, []);
 

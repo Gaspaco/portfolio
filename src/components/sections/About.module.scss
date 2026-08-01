@@ -1,421 +1,254 @@
-@use '../../styles/mixins' as *;
-
-// ─── Main Section ───
 .section {
   position: relative;
-  width: 100%;
-  background-color: var(--c-brand);
-  color: var(--c-white);
-
-  &::selection,
-  & ::selection {
-    background-color: var(--c-accent);
-    color: var(--c-brand);
-  }
-}
-
-// ─── Background ───
-.bgWrapper {
-  position: absolute;
-  inset: 0;
+  min-height: 100svh;
+  padding: clamp(3rem, 5vw, 5rem) clamp(1rem, 3vw, 3rem) clamp(1.5rem, 3vw, 3rem);
   overflow: hidden;
-  pointer-events: none;
+  background: #fff;
+  color: #111;
 }
 
-.blob1 {
-  position: absolute;
-  top: 25%;
-  left: 25%;
-  width: 600px;
-  height: 600px;
-  background-color: rgba(255, 77, 77, 0.1);
-  border-radius: 9999px;
-  filter: blur(80px);
-}
-
-.blob2 {
-  position: absolute;
-  bottom: 25%;
-  right: 25%;
-  width: 500px;
-  height: 500px;
-  background-color: rgba(251, 191, 36, 0.05);
-  border-radius: 9999px;
-  filter: blur(80px);
-}
-
-// ─── Philosophy (Horizontal Scroll) ───
-.philosophyWrapper {
-  min-height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  background-color: var(--c-brand);
-  color: var(--c-white);
-  position: relative;
-  z-index: var(--z-above);
-}
-
-.philosophyTrack {
-  display: flex;
-  flex-direction: row;
-  width: 300vw;
-  height: 100%;
-}
-
-.philosophyItem {
-  width: 100vw;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 5rem 1rem;
-  border: none;
-  border-color: rgba(255, 255, 255, 0.1);
-
-  @include md {
-    flex-direction: row;
-    gap: 5rem;
-    padding: 0 5rem;
-  }
-}
-
-.philosophyTextBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  text-align: center;
-
-  @include md {
-    text-align: left;
-  }
-}
-
-.philosophyHeading {
-  font-size: 12vw;
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  line-height: 1;
-
-  @include md {
-    font-size: 8vw;
-  }
-}
-
-.philosophyHeadingAccent {
-  composes: philosophyHeading;
-  color: var(--c-accent);
-  @include transition(color, var(--duration-slow));
-
-  &:hover {
-    color: var(--c-white);
-  }
-}
-
-.philosophyLabel {
-  @include font-mono;
-  font-size: 0.875rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--c-white);
-  padding-bottom: 0.5rem;
-  width: max-content;
-  margin-left: auto;
-  margin-right: auto;
-
-  @include md {
-    margin-left: 0;
-    margin-right: 0;
-  }
-}
-
-.philosophyImgWrap {
-  width: 70vw;
-  aspect-ratio: 3 / 4;
-  position: relative;
-  overflow: hidden;
-
-  @include md {
-    width: 30vw;
-  }
-
-  &:hover .philosophyImg {
-    transform: scale(1.1);
-  }
-}
-
-.philosophyImgWrapWide {
-  composes: philosophyImgWrap;
-  width: 80vw;
-  aspect-ratio: 16 / 9;
-
-  @include md {
-    width: 40vw;
-  }
-}
-
-.philosophyImg {
-  object-fit: cover;
-  @include transition(transform, var(--duration-slower));
-}
-
-// ─── Part 3: Persona ───
-.persona {
-  padding: 6rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 5rem;
-  align-items: flex-start;
-  background-color: var(--c-brand);
-  position: relative;
-  z-index: var(--z-content);
-
-  @include md {
-    padding: 8rem 5rem;
-    flex-direction: row;
-  }
-}
-
-.personaImageSide {
-  width: 100%;
-  position: relative;
-
-  @include md {
-    width: 50%;
-  }
-}
-
-.personaImgContainer {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-
-  &:hover .personaImg {
-    transform: scale(1);
-  }
-
-  &:hover .redOverlay {
-    opacity: 0;
-  }
-}
-
-.personaImg {
-  object-fit: cover;
-  object-position: top;
-  filter: contrast(1.1);
-  transform: scale(1.1);
-  @include transition(transform, var(--duration-slower));
-}
-
-.redOverlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(140, 25, 33, 0.4);
-  mix-blend-mode: multiply;
-  @include transition(opacity, var(--duration-slower));
-}
-
-.grainInside {
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  pointer-events: none;
-}
-
-.bottomGradient {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 33.333%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
-}
-
-.decorativeCircle {
-  position: absolute;
-  bottom: -2.5rem;
-  right: -2.5rem;
-  width: 10rem;
-  height: 10rem;
-  border: 1px solid #262626;
-  border-radius: 9999px;
+.topline {
   display: flex;
   align-items: center;
-  justify-content: center;
-  animation: spinSlow 20s linear infinite;
-}
-
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: var(--c-accent-red);
-  border-radius: 9999px;
-}
-
-// ─── Persona Content Side ───
-.personaContent {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-
-  @include md {
-    width: 50%;
-  }
-}
-
-.personaTitle {
-  font-size: 3rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.9;
-  margin-bottom: 1.5rem;
-
-  @include md {
-    font-size: 6rem;
-  }
-}
-
-.goldText {
-  color: var(--c-accent);
-}
-
-.bodyTextWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.625;
-  max-width: 32rem;
-
-  @include md {
-    font-size: 1.25rem;
-  }
-}
-
-// ─── Stats Grid ───
-.statsGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 2.5rem;
-  margin-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 2.5rem;
-}
-
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  justify-content: space-between;
   gap: 2rem;
-}
-
-.statsRowBordered {
-  composes: statsRow;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 2.5rem;
-}
-
-.statGroup {
-  &:hover .statHeader {
-    color: var(--c-accent);
-  }
-}
-
-.statHeader {
-  font-size: 0.75rem;
-  @include font-mono;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
-  @include transition(color);
-}
-
-.statValue {
-  font-size: 1.25rem;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--c-white);
-
-  @include md {
-    font-size: 1.5rem;
-  }
 }
 
-.statusDot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background-color: var(--c-accent);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.statusRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
-
-// ─── Services ───
-.servicesBlock {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 2.5rem;
-}
-
-.servicesHeader {
-  font-size: 0.75rem;
-  @include font-mono;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 1.5rem;
-}
-
-.servicesGrid {
+.composition {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-}
-
-.serviceItem {
-  display: flex;
+  min-height: calc(100svh - 8rem);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
+  padding-block: clamp(5rem, 8vw, 8rem) clamp(3rem, 5vw, 5rem);
+}
 
-  &:hover .serviceLabel {
-    color: var(--c-white);
+.titleBlock {
+  z-index: 2;
+  grid-column: 1 / 6;
+  grid-row: 1;
+
+  h2 {
+    width: max-content;
+    margin: 0;
+    font-family: var(--font-caveat), cursive;
+    font-size: clamp(3.8rem, 6.2vw, 6rem);
+    font-weight: 650;
+    line-height: 0.8;
+    letter-spacing: -0.035em;
+
+    span {
+      display: inline-block;
+      margin-left: clamp(1rem, 3vw, 3rem);
+    }
   }
 }
 
-.serviceNum {
-  font-size: 9px;
-  @include font-mono;
-  color: var(--c-accent);
+.location {
+  margin: clamp(2.5rem, 4vw, 4rem) 0 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
-.serviceLabel {
-  font-size: 0.75rem;
-  @include font-mono;
+.portrait {
+  --resolution: 0;
+  position: relative;
+  z-index: 1;
+  grid-column: 5 / 9;
+  grid-row: 1;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  overflow: hidden;
+  background: #111;
+
+}
+
+.portraitImage {
+  object-fit: cover;
+  object-position: center top;
+  image-rendering: pixelated;
+  filter: none;
+}
+
+.portraitMedium,
+.portraitReal {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center top;
+  pointer-events: none;
+}
+
+.portraitMedium {
+  image-rendering: pixelated;
+  opacity: clamp(0, calc(var(--resolution) * 3), 1);
+}
+
+.portraitReal {
+  z-index: 2;
+  opacity: clamp(0, calc((var(--resolution) - 0.58) * 2.4), 1);
+}
+
+.resolutionControl {
+  z-index: 3;
+  display: grid;
+  grid-column: 5 / 9;
+  grid-row: 2;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.8rem;
+  align-self: start;
+  align-items: center;
+  margin-top: 1.4rem;
+  padding: 0.6rem 0.35rem;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.7);
-  @include transition(color, var(--duration-base));
 
-  @include md {
-    font-size: 0.875rem;
+  input {
+    width: 100%;
+    height: 1rem;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    cursor: ew-resize;
+
+    &::-webkit-slider-runnable-track {
+      height: 2px;
+      background: #111;
+    }
+
+    &::-webkit-slider-thumb {
+      width: 0.8rem;
+      height: 0.8rem;
+      margin-top: -0.35rem;
+      appearance: none;
+      border: 0;
+      border-radius: 0;
+      background: #111;
+    }
+
+    &::-moz-range-track {
+      height: 2px;
+      background: #111;
+    }
+
+    &::-moz-range-thumb {
+      width: 0.8rem;
+      height: 0.8rem;
+      border: 0;
+      border-radius: 0;
+      background: #111;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #111;
+      outline-offset: 0.35rem;
+    }
   }
+}
+
+.story {
+  z-index: 2;
+  grid-column: 10 / 13;
+  grid-row: 1;
+  align-self: end;
+  padding-bottom: clamp(1rem, 4vw, 4rem);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+
+  p {
+    max-width: 34ch;
+    margin: 0;
+    font-size: clamp(0.95rem, 1.05vw, 1.08rem);
+    font-weight: 600;
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .lead {
+    margin-bottom: 1.6rem;
+    font-size: clamp(1.25rem, 1.75vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+}
+
+.disciplines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.2rem;
+  margin-top: clamp(2.5rem, 5vw, 5rem);
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  span { position: relative; }
+  span:not(:last-child)::after { content: "·"; position: absolute; right: -0.75rem; }
+}
+
+.marquee {
+  position: relative;
+  width: calc(100% + clamp(2rem, 6vw, 6rem));
+  height: clamp(12rem, 19vw, 18rem);
+  margin-left: calc(clamp(1rem, 3vw, 3rem) * -1);
+  overflow: hidden;
+  background: transparent;
+  color: #fff;
+}
+
+.uMarquee {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.uBand {
+  fill: none;
+  stroke: #111;
+  stroke-width: 142px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.uText {
+  fill: #fff;
+  font-family: var(--font-caveat), cursive;
+  font-size: clamp(48px, 5vw, 70px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+
+  .uAccent {
+    fill: #bfff00;
+  }
+}
+
+@media (max-width: 980px) {
+  .composition { align-items: start; }
+  .titleBlock { grid-column: 1 / 7; padding-top: 3rem; }
+  .portrait { grid-column: 6 / 12; }
+  .resolutionControl { grid-column: 6 / 12; grid-row: 2; }
+  .story { grid-column: 2 / 8; grid-row: 3; margin-top: 4rem; padding-bottom: 0; }
+}
+
+@media (max-width: 680px) {
+  .section { min-height: auto; padding-top: 3.5rem; }
+  .topline span:last-child { display: none; }
+  .composition { min-height: 0; grid-template-columns: 1fr; gap: 3rem; padding-block: 4.5rem 2rem; }
+  .titleBlock, .portrait, .resolutionControl, .story { grid-column: 1; grid-row: auto; }
+  .titleBlock { padding-top: 0; }
+  .titleBlock h2 { width: auto; }
+  .location { margin-top: 2rem; }
+  .portrait { width: min(84vw, 27rem); justify-self: end; }
+  .resolutionControl { width: min(84vw, 27rem); margin-top: 1rem; padding: 0.75rem 0.35rem; justify-self: end; }
+  .story { width: min(100%, 30rem); margin-top: 0; justify-self: start; }
+  .disciplines { margin-top: 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uText animate { display: none; }
 }
