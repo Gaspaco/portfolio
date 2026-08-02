@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Project } from "@/lib/projects";
@@ -13,6 +14,22 @@ const projectsIndex = (slug: string) => ["aria", "melograph", "museum"].indexOf(
 export default function CaseStudy({ project, nextProject }: { project: Project; nextProject: Project }) {
   const root = useRef<HTMLElement>(null);
   const hero = useRef<HTMLElement>(null);
+  const router = useRouter();
+
+  const openNextProject = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    event.preventDefault();
+    const href = `/case/${nextProject.slug}`;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      router.push(href);
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent("pixel-transition-start"));
+    window.dispatchEvent(new CustomEvent("sound-play", { detail: { sound: "longclick" } }));
+    window.setTimeout(() => router.push(href), 850);
+  };
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -54,6 +71,25 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
         ease: "power4.out",
         scrollTrigger: { trigger: `.${s.deviceStage}`, start: "top 78%", once: true },
       });
+
+      gsap.fromTo(
+        `.${s.statementWord}`,
+        { opacity: 0.14, y: "0.45em", filter: "blur(4px)" },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          stagger: 0.035,
+          ease: "none",
+          scrollTrigger: {
+            trigger: `.${s.statement}`,
+            start: "top 78%",
+            end: "bottom 58%",
+            scrub: 0.65,
+          },
+        },
+      );
+
     }, root);
     return () => ctx.revert();
   }, []);
@@ -112,7 +148,13 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
       </section>
 
       <section className={s.statement}>
-        <p data-reveal>{project.longDescription}</p>
+        <p aria-label={project.longDescription}>
+          {project.longDescription.split(/\s+/).map((word, index) => (
+            <span className={s.statementWord} aria-hidden="true" key={`${word}-${index}`}>
+              {word}
+            </span>
+          ))}
+        </p>
       </section>
 
       <section className={s.deviceStage} aria-label={`${project.title} desktop presentation`}>
@@ -179,17 +221,33 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
         ))}
       </section>
 
-      <Link href={`/case/${nextProject.slug}`} className={s.next}>
-        <Image src={nextProject.src} alt="" fill sizes="100vw" className={s.nextImage} />
-        <div className={s.nextShade} />
-        <span className={s.nextLabel}>Next project</span>
-        <h2>{nextProject.title}</h2>
-        <span className={s.nextArrow}>↗</span>
-      </Link>
+      <section className={s.next} aria-label={`Next project: ${nextProject.title}`}>
+        <div className={s.nextTicker} aria-hidden="true">
+          {[0, 1, 2].map((row) => (
+            <div className={s.nextTickerRow} key={row}>
+              <div className={s.nextTickerTrack}>
+                <span>{nextProject.title} · {nextProject.title} · {nextProject.title} ·</span>
+                <span>{nextProject.title} · {nextProject.title} · {nextProject.title} ·</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className={s.nextCopy}>
+          <span className={s.nextLabel}>Next project · {nextProject.year}</span>
+          <h2>{nextProject.title}</h2>
+          <p>{nextProject.category}</p>
+        </div>
+        <Link href={`/case/${nextProject.slug}`} className={s.nextAction} onClick={openNextProject}>
+          <span>View case study</span>
+          <svg className={s.nextArrow} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M4 11v2h16v-2zm12 2v2h2v-2zm-2 2v2h2v-2zm-2 2v2h2v-2zm4-6V9h2v2z" />
+            <path d="M14 15V7h2v8zm-2 2V5h2v12z" />
+          </svg>
+        </Link>
+      </section>
 
       <footer className={s.footer}>
         <span>Niko © {new Date().getFullYear()}</span>
-        <a href="mailto:nikodima2007@gmail.com">Start a project ↗</a>
       </footer>
     </main>
   );

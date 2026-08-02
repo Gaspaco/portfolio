@@ -117,6 +117,7 @@
 
 .media {
   position: relative;
+  container-type: inline-size;
   width: calc(100% - 2.5rem);
   margin-inline: 1.25rem;
   margin-bottom: 1.25rem;
@@ -153,13 +154,14 @@
   bottom: clamp(0.25rem, 0.8vw, 0.8rem);
   left: clamp(0.75rem, 2vw, 2rem);
   z-index: 2;
-  overflow: hidden;
+  max-width: calc(100% - clamp(1.5rem, 4vw, 4rem));
+  overflow: visible;
   color: #fff;
   font-family: var(--font-caveat), cursive;
-  font-size: clamp(4rem, 12vw, 12rem);
+  font-size: clamp(3rem, 10.5cqw, 10.5rem);
   font-weight: 650;
-  line-height: 0.72;
-  letter-spacing: -0.055em;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
   white-space: nowrap;
   mix-blend-mode: difference;
   pointer-events: none;

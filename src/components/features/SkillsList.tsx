@@ -60,7 +60,7 @@ export default function SkillsList() {
           );
         });
 
-        // Skill names — masked slide up
+        // Skill names: masked slide up
         gsap.utils.toArray<HTMLElement>(".skill-name").forEach((el) => {
           gsap.fromTo(el,
             { y: "100%" },
@@ -70,7 +70,7 @@ export default function SkillsList() {
           );
         });
 
-        // Category labels — fade in from right
+        // Category labels: fade in from right
         gsap.utils.toArray<HTMLElement>(".skill-cat").forEach((el) => {
           gsap.fromTo(el,
             { opacity: 0, x: 15 },

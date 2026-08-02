@@ -38,6 +38,16 @@ export default function IntroStatement() {
     let lastFrame = 0;
     const frameInterval = 1000 / 60;
 
+    const stopRendering = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const startRendering = () => {
+      if (frame || !visible || document.hidden) return;
+      frame = requestAnimationFrame(render);
+    };
+
     const buildParticles = () => {
       const rect = section.getBoundingClientRect();
       width = rect.width;
@@ -108,7 +118,8 @@ export default function IntroStatement() {
 
     const render = (time = 0) => {
       if (!visible || document.hidden || time - lastFrame < frameInterval) {
-        frame = requestAnimationFrame(render);
+        if (visible && !document.hidden) frame = requestAnimationFrame(render);
+        else frame = 0;
         return;
       }
       lastFrame = time;
@@ -183,7 +194,7 @@ export default function IntroStatement() {
     const prepare = async () => {
       await document.fonts.ready;
       buildParticles();
-      render();
+      startRendering();
     };
 
     const entrance = gsap.fromTo(
@@ -222,7 +233,9 @@ export default function IntroStatement() {
         if (entry.isIntersecting) {
           activated = true;
           entrance.play();
+          startRendering();
         } else if (entry.boundingClientRect.top > 0) {
+          stopRendering();
           activated = false;
           entrance.reverse();
           particles.forEach((particle) => {
@@ -236,6 +249,11 @@ export default function IntroStatement() {
       { rootMargin: "120px" },
     );
     observer.observe(section);
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopRendering();
+      else startRendering();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     let resizeFrame = 0;
     const handleResize = () => {
       cancelAnimationFrame(resizeFrame);
@@ -248,10 +266,11 @@ export default function IntroStatement() {
     canvas.addEventListener("pointerdown", burst);
 
     return () => {
-      cancelAnimationFrame(frame);
+      stopRendering();
       cancelAnimationFrame(resizeFrame);
       entrance.kill();
       observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("resize", handleResize);
       canvas.removeEventListener("pointermove", updatePointer);
       canvas.removeEventListener("pointerleave", releasePointer);

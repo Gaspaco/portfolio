@@ -160,7 +160,7 @@ export default function Navbar() {
                   className={s.soundButton}
                   onClick={toggleSound}
                   aria-pressed={!isMuted}
-                  aria-label={isMuted ? "Turn sound on" : "Mute sound"}
+                  aria-label={isMuted ? "Play background music" : "Stop background music"}
                   data-sound={isMuted ? "switch" : "close"}
                 >
                   <span className={s.soundBars} aria-hidden="true">

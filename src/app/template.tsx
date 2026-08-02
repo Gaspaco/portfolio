@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import s from "./template.module.scss";
 
 const COLUMNS = 20;
@@ -19,19 +19,40 @@ const PIXELS = Array.from({ length: COLUMNS * ROWS }, (_, index) => {
   };
 });
 
-let hasRenderedInitialRoute = false;
+const TRANSITION_KEY = "niko-route-transition";
 
 export default function Template({ children }: { children: ReactNode }) {
-  const shouldAnimate = hasRenderedInitialRoute;
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [isCovering, setIsCovering] = useState(false);
 
   useEffect(() => {
-    hasRenderedInitialRoute = true;
+    if (window.sessionStorage.getItem(TRANSITION_KEY) === "pending") {
+      window.sessionStorage.removeItem(TRANSITION_KEY);
+      setShouldAnimate(true);
+    }
+
+    const startCover = () => {
+      window.sessionStorage.setItem(TRANSITION_KEY, "pending");
+      setIsCovering(true);
+    };
+    window.addEventListener("pixel-transition-start", startCover);
+    return () => window.removeEventListener("pixel-transition-start", startCover);
   }, []);
 
   return (
     <>
       {shouldAnimate && (
         <div className={s.pixelTransition} aria-hidden="true">
+          {PIXELS.map(({ index, delay }) => (
+            <span
+              key={index}
+              style={{ "--pixel-delay": `${delay}ms` } as CSSProperties}
+            />
+          ))}
+        </div>
+      )}
+      {isCovering && (
+        <div className={s.pixelCover} aria-hidden="true">
           {PIXELS.map(({ index, delay }) => (
             <span
               key={index}

@@ -15,10 +15,6 @@ type SoundBank = {
   ambient: PlayableSound;
 };
 
-type HowlerController = {
-  mute: (muted: boolean) => void;
-};
-
 type SoundPlayEvent = CustomEvent<{ sound?: MenuSoundKey }>;
 
 const SOUND_TARGET_SELECTOR = "[data-sound]:not([data-sound='off'])";
@@ -131,7 +127,6 @@ function getSoundKey(element: HTMLElement): MenuSoundKey {
 export default function SoundEffects() {
   const soundsRef = useRef<SoundBank | null>(null);
   const loadingRef = useRef<Promise<SoundBank> | null>(null);
-  const howlerRef = useRef<HowlerController | null>(null);
   const ambientStartedRef = useRef(false);
   const mutedRef = useRef(false);
 
@@ -142,10 +137,7 @@ export default function SoundEffects() {
       if (soundsRef.current) return soundsRef.current;
       if (loadingRef.current) return loadingRef.current;
 
-      loadingRef.current = import("howler").then(({ Howl, Howler }) => {
-        howlerRef.current = Howler;
-        Howler.mute(mutedRef.current);
-
+      loadingRef.current = import("howler").then(({ Howl }) => {
         const bank: SoundBank = {
           effects: {
             click: new Howl({
@@ -220,11 +212,13 @@ export default function SoundEffects() {
 
     const setMuted = (muted: boolean) => {
       mutedRef.current = muted;
-      howlerRef.current?.mute(muted);
       window.localStorage.setItem("sound-muted", muted ? "1" : "0");
       window.dispatchEvent(new CustomEvent("sound-muted-change", { detail: { muted } }));
 
-      if (!muted) {
+      if (muted) {
+        soundsRef.current?.ambient.stop();
+        ambientStartedRef.current = false;
+      } else {
         void startAmbient();
       }
     };

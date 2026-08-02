@@ -204,7 +204,7 @@ export default function CraftBuild() {
       </div>
 
       <div className={s.computer} data-reveal>
-        <div className={s.monitorLabel}><span>NIKO PERSONAL COMPUTER</span><span>MODEL ND—07</span></div>
+        <div className={s.monitorLabel}><span>NIKO PERSONAL COMPUTER</span><span>MODEL ND-07</span></div>
 
         <div ref={screenRef} className={s.screen} data-powered={isPowered}>
 
@@ -236,7 +236,7 @@ export default function CraftBuild() {
             <div className={s.windowBar} onPointerDown={startWindowDrag} onPointerMove={moveWindow} onPointerUp={endWindowDrag} onPointerCancel={endWindowDrag}>
               <span><i /> {screen.label.toLowerCase()}.app</span>
               <div className={s.windowActions}>
-                <button type="button" aria-label="Minimize window" onClick={() => setWindowMode("minimized")}>—</button>
+                <button type="button" aria-label="Minimize window" onClick={() => setWindowMode("minimized")}>−</button>
                 <button type="button" aria-label={windowMode === "maximized" ? "Restore window" : "Maximize window"} onClick={() => setWindowMode(windowMode === "maximized" ? "open" : "maximized")}>{windowMode === "maximized" ? "❐" : "□"}</button>
                 <button type="button" aria-label="Close window" onClick={() => setWindowMode("closed")}>×</button>
               </div>

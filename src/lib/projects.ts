@@ -30,12 +30,12 @@ export const projects: Project[] = [
     liveUrl: "https://health-app-xi-five.vercel.app/",
     description: "A revolutionary approach to personal fitness tracking.",
     longDescription:
-      "Aria redefines how people interact with their fitness data. Instead of overwhelming dashboards and endless metrics, Aria focuses on what matters — building habits that stick. The app provides a clean, distraction-free experience that adapts to each user's pace and goals.",
+      "Aria redefines how people interact with their fitness data. Instead of overwhelming dashboards and endless metrics, Aria focuses on what matters: building habits that stick. The app provides a clean, distraction-free experience that adapts to each user's pace and goals.",
     role: "Full-Stack Developer",
     duration: "3 Months",
     technologies: ["React Native", "Supabase", "Reanimated", "Expo"],
     challenge:
-      "Most fitness apps overload users with data they never act on. The challenge was creating an interface that feels personal and motivating rather than clinical. Performance on lower-end Android devices was another constraint — animations had to stay buttery at 60fps on hardware with limited GPU.",
+      "Most fitness apps overload users with data they never act on. The challenge was creating an interface that feels personal and motivating rather than clinical. Performance on lower-end Android devices was another constraint. Animations had to stay buttery at 60fps on hardware with limited GPU.",
     solution:
       "I built a gesture-driven interface with React Native Reanimated, where every interaction gives tactile feedback. The backend runs on Supabase with row-level security for user data. A custom animation system batches UI updates to maintain frame rates across devices, and the onboarding flow adapts based on user responses.",
     process: [
@@ -62,18 +62,18 @@ export const projects: Project[] = [
     liveUrl: "https://melographstudio.online/",
     description: "High-performance digital experiences and motion design.",
     longDescription:
-      "Melograph Studio needed a web presence that matched the energy of their creative output. The site serves as both a portfolio and a statement piece — every scroll, every transition, every hover is intentional. It had to load fast, feel premium, and leave an impression.",
+      "Melograph Studio needed a web presence that matched the energy of their creative output. The site serves as both a portfolio and a statement piece. Every scroll, transition, and hover is intentional. It had to load fast, feel premium, and leave an impression.",
     role: "Frontend Developer & Designer",
     duration: "2 Months",
     technologies: ["Next.js", "GSAP", "Sass", "Neon"],
     challenge:
-      "The studio wanted a site that felt like a reel — cinematic and fluid — but also functioned as a practical portfolio clients could browse. Balancing heavy motion design with performance and SEO was the core tension. The site also needed a CMS-backed project feed that non-technical team members could update.",
+      "The studio wanted a site that felt cinematic and fluid while still functioning as a practical portfolio clients could browse. Balancing heavy motion design with performance and SEO was the core tension. The site also needed a CMS-backed project feed that non-technical team members could update.",
     solution:
-      "I used Next.js for SSR and SEO, with GSAP ScrollTrigger for scroll-driven animations that only activate in viewport. A Neon serverless Postgres database powers the project feed. Critical CSS is inlined, fonts are subset, and images use blur-up placeholders. Every animation is GPU-composited — no layout thrashing.",
+      "I used Next.js for SSR and SEO, with GSAP ScrollTrigger for scroll-driven animations that only activate in viewport. A Neon serverless Postgres database powers the project feed. Critical CSS is inlined, fonts are subset, and images use blur-up placeholders. Every animation is GPU-composited to avoid layout thrashing.",
     process: [
-      { step: "Direction", detail: "Set the visual language: dark, editorial, motion-forward. Every interaction references film — cuts, reveals, dissolves." },
-      { step: "Architecture", detail: "Next.js App Router with SSR for SEO. Project data lives in Neon — editable without touching code." },
-      { step: "Motion", detail: "GSAP timeline for page-load choreography. ScrollTrigger scrubs each section in viewport only — no wasted frames." },
+      { step: "Direction", detail: "Set the visual language: dark, editorial, motion-forward. Every interaction references film through cuts, reveals, and dissolves." },
+      { step: "Architecture", detail: "Next.js App Router with SSR for SEO. Project data lives in Neon and is editable without touching code." },
+      { step: "Motion", detail: "GSAP timeline for page-load choreography. ScrollTrigger scrubs each section only while it is in view." },
       { step: "Polish", detail: "Lighthouse audits after every major change. Subset fonts, defer non-critical JS, preload hero image." },
     ],
     results: [
@@ -93,7 +93,7 @@ export const projects: Project[] = [
     liveUrl: "https://www.dimabouw.site/",
     description: "A professional web presence for a construction company.",
     longDescription:
-      "Dima Bouw needed a clean, trustworthy website that showcases their construction projects and services. The site balances visual impact with practical information — visitors can browse completed projects, understand service offerings, and get in touch quickly. Built for speed and clarity on every device.",
+      "Dima Bouw needed a clean, trustworthy website that showcases their construction projects and services. The site balances visual impact with practical information, helping visitors browse completed projects, understand service offerings, and get in touch quickly. Built for speed and clarity on every device.",
     role: "Frontend Developer",
     duration: "1 Month",
     technologies: ["Next.js", "Tailwind CSS", "GSAP"],
@@ -124,16 +124,16 @@ export const projects: Project[] = [
     liveUrl: "https://melostudio.nl/",
     description: "A creative platform for music production and collaboration.",
     longDescription:
-      "MeloStudio is a platform built for music creators who want a seamless space to produce, share, and collaborate. The interface is designed to stay out of the way — dark, focused, and responsive. Every interaction is tuned for creative flow, from project navigation to real-time collaboration features.",
+      "MeloStudio is a platform built for music creators who want a seamless space to produce, share, and collaborate. The interface is dark, focused, responsive, and designed to stay out of the way. Every interaction is tuned for creative flow, from project navigation to real-time collaboration features.",
     role: "Full-Stack Developer",
     duration: "2 Months",
     technologies: ["Next.js", "Tailwind CSS", "Supabase", "GSAP"],
     challenge:
-      "Creative tools often sacrifice usability for feature density. The challenge was building a platform that feels minimal and focused while still offering the depth creators need — project management, sharing, and collaboration without the clutter.",
+      "Creative tools often sacrifice usability for feature density. The challenge was building a platform that feels minimal and focused while still offering the project management, sharing, and collaboration tools creators need.",
     solution:
       "A Next.js frontend with Tailwind CSS for a clean, dark-themed interface. Supabase handles authentication and real-time data sync. GSAP powers smooth transitions between views, keeping the experience fluid. The architecture is modular so new creative tools can be added without disrupting the core workflow.",
     process: [
-      { step: "Research", detail: "Studied how producers actually work — late nights, flow states, minimal tolerance for friction." },
+      { step: "Research", detail: "Studied how producers actually work: late nights, flow states, and minimal tolerance for friction." },
       { step: "Design", detail: "Dark-first UI with high contrast accents. Every screen serves one purpose. No sidebars, no clutter." },
       { step: "Build", detail: "Next.js App Router with Supabase realtime. Tailwind for rapid iteration on the design system." },
       { step: "Ship", detail: "Deployed with edge functions for low-latency access. Tested with real creators for feedback loops." },

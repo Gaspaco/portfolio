@@ -101,7 +101,7 @@ export default function Archive() {
           <p>Three projects shaped through interface, motion, and code.</p>
           <div className={s.archiveMeta}>
             <span>03 selected</span>
-            <span>2025—2026</span>
+            <span>2025 / 2026</span>
           </div>
         </div>
 

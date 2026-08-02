@@ -67,6 +67,16 @@ export default function Hero() {
     let sampleCols = 0;
     let sampleRows = 0;
 
+    const stopDrawing = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
+    const startDrawing = () => {
+      if (raf || !visible || document.hidden) return;
+      raf = requestAnimationFrame(draw);
+    };
+
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
@@ -87,7 +97,7 @@ export default function Hero() {
 
     const draw = (time = 0) => {
       if (!visible || document.hidden) {
-        raf = requestAnimationFrame(draw);
+        raf = 0;
         return;
       }
       if (time - lastFrame < FRAME_INTERVAL) {
@@ -167,18 +177,31 @@ export default function Hero() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
+        stream?.getVideoTracks().forEach((track) => {
+          track.enabled = visible;
+        });
+
+        if (visible) startDrawing();
+        else stopDrawing();
       },
       { rootMargin: "100px" },
     );
     observer.observe(canvas);
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopDrawing();
+      else startDrawing();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
       setCameraFailed(true);
       drawFallback("use localhost or https");
       return () => {
         disposed = true;
-        cancelAnimationFrame(raf);
+        stopDrawing();
         window.removeEventListener("resize", resize);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
         observer.disconnect();
       };
     }
@@ -195,7 +218,7 @@ export default function Hero() {
         video.play()
           .then(() => {
             setCameraFailed(false);
-            raf = requestAnimationFrame(draw);
+            startDrawing();
           })
           .catch(() => {
             setCameraFailed(true);
@@ -209,8 +232,9 @@ export default function Hero() {
 
     return () => {
       disposed = true;
-      cancelAnimationFrame(raf);
+      stopDrawing();
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       observer.disconnect();
       stream?.getTracks().forEach((track) => track.stop());
     };
