@@ -16,7 +16,7 @@
   }
 
   > section:nth-of-type(6) {
-    margin-top: clamp(3rem, 5vw, 5rem);
+    margin-top: 0;
   }
 }
 
@@ -31,6 +31,6 @@
   }
 
   .main > section:nth-of-type(6) {
-    margin-top: 3rem;
+    margin-top: 0;
   }
 }

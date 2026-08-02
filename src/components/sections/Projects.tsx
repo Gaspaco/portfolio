@@ -189,6 +189,26 @@ export default function Projects() {
       </div>
 
       <footer className={s.footer}>
+        <div className={s.footerMarquee} aria-hidden="true">
+          <svg className={s.uMarquee} viewBox="0 0 1600 600" preserveAspectRatio="none">
+            <defs>
+              <path id="projects-u-path" pathLength="100" d="M-140 62 C85 62 150 174 420 174 L790 174 C970 174 1008 350 1072 492 C1128 584 1160 642 1160 720" />
+            </defs>
+            <use href="#projects-u-path" className={s.uBand} />
+            <text className={s.uText} dy="0.33em">
+              <textPath href="#projects-u-path" startOffset="-100%" textLength="1400" lengthAdjust="spacing">
+                  Selected work ◆ <tspan className={s.uAccent}>Side quests</tspan> ◆ Experiments ◆ <tspan className={s.uAccent}>Digital playground</tspan> ◆
+                <animate attributeName="startOffset" from="-100%" to="0%" dur="11s" repeatCount="indefinite" />
+              </textPath>
+            </text>
+            <text className={s.uText} dy="0.33em">
+              <textPath href="#projects-u-path" startOffset="0%" textLength="1400" lengthAdjust="spacing">
+                  Selected work ◆ <tspan className={s.uAccent}>Side quests</tspan> ◆ Experiments ◆ <tspan className={s.uAccent}>Digital playground</tspan> ◆
+                <animate attributeName="startOffset" from="0%" to="100%" dur="11s" repeatCount="indefinite" />
+              </textPath>
+            </text>
+          </svg>
+        </div>
         <p aria-label={FOOTER_TEXT}>
           {FOOTER_TEXT.split(" ").map((word, wordIndex) => (
             <span key={`${word}-${wordIndex}`} className={s.footerWord} aria-hidden="true">

@@ -1,4 +1,5 @@
 .root{position:fixed;inset:0;z-index:var(--z-curtain-1);overflow:hidden;background:#f1f1ec;color:#111;clip-path:inset(0);pointer-events:auto;will-change:clip-path}
+:global(.loader-seen) .root{display:none}
 .interface{display:grid;height:100%;grid-template-rows:auto 1fr auto;padding:clamp(1rem,2.5vw,2.75rem);will-change:opacity}
 .meta{opacity:0;font:740 clamp(.64rem,.75vw,.8rem)/1 var(--font-geist-sans),system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .header{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}.stage{position:relative;display:grid;width:min(38rem,72vw);place-items:center;align-self:center;justify-self:center}.stage::before{position:absolute;top:50%;right:calc(100% + clamp(.8rem,1.5vw,1.5rem));color:rgba(17,17,17,.55);content:"DESIGN / MOTION / CODE";font:700 clamp(.48rem,.6vw,.62rem)/1 var(--font-geist-mono),monospace;letter-spacing:.12em;text-transform:uppercase;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl}
