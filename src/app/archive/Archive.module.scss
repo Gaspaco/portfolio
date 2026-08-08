@@ -149,6 +149,11 @@
   background: #f7f7f7;
 }
 
+.melostudioImage {
+  object-fit: cover;
+  object-position: center;
+}
+
 .projectCopy {
   display: flex;
   flex-direction: column;

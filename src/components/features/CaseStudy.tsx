@@ -15,6 +15,7 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
   const root = useRef<HTMLElement>(null);
   const hero = useRef<HTMLElement>(null);
   const router = useRouter();
+  const usesPhonePresentation = project.slug === "aria";
 
   const openNextProject = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -63,7 +64,7 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
         });
       });
 
-      gsap.from(`.${s.deviceLaptop}`, {
+      gsap.from(`.${s.devicePresentation}`, {
         y: 110,
         scale: 0.82,
         rotateX: 13,
@@ -157,19 +158,40 @@ export default function CaseStudy({ project, nextProject }: { project: Project; 
         </p>
       </section>
 
-      <section className={s.deviceStage} aria-label={`${project.title} desktop presentation`}>
-        <div className={s.deviceCaption}><span>DESKTOP EXPERIENCE</span><span>01 / RESPONSIVE BUILD</span></div>
+      <section className={s.deviceStage} aria-label={`${project.title} ${usesPhonePresentation ? "mobile" : "desktop"} presentation`}>
+        <div className={s.deviceCaption}><span>{usesPhonePresentation ? "MOBILE EXPERIENCE" : "DESKTOP EXPERIENCE"}</span><span>01 / RESPONSIVE BUILD</span></div>
         <div className={s.deviceIntro} data-reveal>
-          <span>Desktop experience</span>
+          <span>{usesPhonePresentation ? "Mobile experience" : "Desktop experience"}</span>
           <p>The interface in motion,<br />shown where it was built to live.</p>
         </div>
-        <div className={s.deviceLaptop}>
-          <div className={s.laptopScreen}>
-            <Image src={project.images[0]} alt={`${project.title} website preview`} fill sizes="(max-width: 768px) 94vw, 78vw" className={s.laptopPoster} />
-            <video src={`/case-${project.slug}.webm`} poster={project.images[0]} aria-label={`${project.title} website interaction preview`} autoPlay muted loop playsInline preload="metadata" />
+        {usesPhonePresentation ? (
+          <div className={`${s.devicePresentation} ${s.devicePhone}`}>
+            <i className={s.phoneButtonTop} aria-hidden="true" />
+            <i className={s.phoneButtonMiddle} aria-hidden="true" />
+            <i className={s.phoneButtonBottom} aria-hidden="true" />
+            <div className={s.phoneScreen}>
+              <Image src="/project-aria-new.jpg" alt={`${project.title} mobile app preview`} fill sizes="(max-width: 768px) 68vw, 24rem" className={s.phonePoster} />
+              <span className={s.dynamicIsland} aria-hidden="true" />
+            </div>
           </div>
-          <Image src="/macbook-pro-16-modern.avif" alt="" fill sizes="(max-width: 768px) 110vw, 92vw" className={s.laptopFrame} aria-hidden="true" />
-        </div>
+        ) : (
+          <div className={`${s.devicePresentation} ${s.deviceLaptop}`}>
+            <div className={s.laptopScreen}>
+              <Image src={project.images[0]} alt={`${project.title} website preview`} fill sizes="(max-width: 768px) 94vw, 78vw" className={s.laptopPoster} />
+              <video
+                src={`/case-${project.slug}.webm`}
+                poster={project.images[0]}
+                aria-label={`${project.title} website interaction preview`}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+              />
+            </div>
+            <Image src="/macbook-pro-16-modern.avif" alt="" fill sizes="(max-width: 768px) 110vw, 92vw" className={s.laptopFrame} aria-hidden="true" />
+          </div>
+        )}
       </section>
 
       <section className={s.story}>

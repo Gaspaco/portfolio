@@ -121,7 +121,7 @@ export default function Archive() {
                 src={previews[project.slug] ?? project.src}
                 alt={`${project.title} project preview`}
                 fill
-                className={s.image}
+                className={`${s.image} ${project.slug === "melostudio" ? s.melostudioImage : ""}`}
                 sizes="(max-width: 800px) 92vw, 62vw"
                 priority={index === 0}
               />

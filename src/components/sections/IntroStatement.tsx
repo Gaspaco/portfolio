@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import s from "./IntroStatement.module.scss";
 
@@ -17,11 +17,16 @@ type Particle = {
 export default function IntroStatement() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [mobileTypeState, setMobileTypeState] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     if (!section || !canvas) return;
+
+    // The particle letterforms lose legibility once compressed to a phone.
+    // Mobile uses the real text treatment rendered alongside the canvas.
+    if (window.matchMedia("(max-width: 700px)").matches) return;
 
     const context = canvas.getContext("2d");
     if (!context) return;
@@ -284,6 +289,21 @@ export default function IntroStatement() {
       <p className={s.fallback}>
         I turn curious ideas into playful digital experiences that feel alive.
       </p>
+      <button
+        type="button"
+        className={s.mobileStatement}
+        data-state={mobileTypeState}
+        onClick={() => setMobileTypeState((state) => (state + 1) % 3)}
+        aria-label="Rearrange the statement"
+        data-sound="click"
+      >
+        <span>I turn</span>
+        <span>curious ideas</span>
+        <span>into playful</span>
+        <span>digital experiences</span>
+        <span>that feel alive.</span>
+        <small>Tap to stir the type</small>
+      </button>
     </section>
   );
 }

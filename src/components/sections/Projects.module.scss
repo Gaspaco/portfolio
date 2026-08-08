@@ -337,6 +337,15 @@
   vector-effect: non-scaling-stroke;
 }
 
+.uBandLeg {
+  display: none;
+  fill: none;
+  stroke: #111;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
 .uText {
   fill: #fff;
   font-family: var(--font-caveat), cursive;
@@ -368,6 +377,30 @@
     filter: none;
     transform: none;
   }
+
+  .footer {
+    min-height: clamp(27rem, 62svh, 34rem);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 2rem;
+    padding-top: clamp(6rem, 15vw, 8rem);
+    padding-bottom: clamp(4rem, 10vw, 6rem);
+  }
+
+  .footerMarquee {
+    right: -18%;
+    left: -4%;
+    width: 122%;
+  }
+
+  .uBand {
+    stroke-width: 88px;
+  }
+
+  .uText {
+    font-size: clamp(39px, 6vw, 52px);
+  }
 }
 
 @media (max-width: 600px) {
@@ -395,10 +428,40 @@
   }
 
   .footer {
-    min-height: 55svh;
+    min-height: 29rem;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-end;
+    gap: 2.25rem;
+    padding-top: 7rem;
+    padding-bottom: 4.5rem;
+  }
+
+  .footerMarquee {
+    top: -5rem;
+    right: -25%;
+    left: -5%;
+    width: 130%;
+    height: calc(100% + 5rem);
+  }
+
+  .uBand {
+    stroke-width: 72px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .uBandLeg {
+    display: block;
+    stroke-width: 86px;
+  }
+
+  .footer p {
+    max-width: 9ch;
+    font-size: clamp(2.75rem, 14vw, 4rem);
+  }
+
+  .footer .archiveLink {
+    font-size: clamp(1.1rem, 5.5vw, 1.45rem);
   }
 
 }

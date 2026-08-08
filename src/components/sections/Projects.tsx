@@ -195,6 +195,10 @@ export default function Projects() {
               <path id="projects-u-path" pathLength="100" d="M-140 62 C85 62 150 174 420 174 L790 174 C970 174 1008 350 1072 492 C1128 584 1160 642 1160 720" />
             </defs>
             <use href="#projects-u-path" className={s.uBand} />
+            <path
+              className={s.uBandLeg}
+              d="M790 174 C970 174 1008 350 1072 492 C1128 584 1160 642 1160 720"
+            />
             <text className={s.uText} dy="0.33em">
               <textPath href="#projects-u-path" startOffset="-100%" textLength="1400" lengthAdjust="spacing">
                   Selected work ◆ <tspan className={s.uAccent}>Side quests</tspan> ◆ Experiments ◆ <tspan className={s.uAccent}>Digital playground</tspan> ◆

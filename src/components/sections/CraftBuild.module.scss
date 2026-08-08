@@ -53,3 +53,53 @@
 
 /* XP structure, recolored for Niko's interface */
 .taskbar{border-top:2px solid #f2f2ed;background:#c8c8c2;box-shadow:inset 0 1px 0 #fff,0 -1px 0 #555;color:#111}.startButton{min-width:5.25rem;border-radius:0 1rem 1rem 0;background:#111;box-shadow:inset 0 2px 0 #444,inset -2px -2px 0 #000,2px 0 0 rgba(17,17,17,.25);color:#b6ff00;font-style:normal;text-shadow:none}.startButton:hover{background:#202020;filter:none}.startButton i{background:#b6ff00}.startButton i::before{background:#f2f2ed;box-shadow:-.54rem .42rem 0 #f2f2ed}.startButton i::after{background:#b6ff00}.openApp{border-color:#777;background:#e1e1dc;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #777;color:#111;text-shadow:none}.openApp:hover{background:#b6ff00}.taskbar>.systemTray{border-left:1px solid #777;background:#b6ff00;box-shadow:inset 1px 0 0 rgba(255,255,255,.65);color:#111}.trayIcons{display:flex!important;align-items:center;gap:.28rem}.taskbar>.systemTray .trayIcons svg{display:block;width:.85rem;height:.85rem;color:#111}.taskbar>.systemTray>span:not(.trayIcons),.taskbar time{color:#111}.taskbar time{border-left-color:rgba(17,17,17,.3)}
+
+/* On small screens the desktop becomes a contained app composition. */
+.mobileExpand{display:none}
+
+@media (max-width:760px) {
+  .section{padding-inline:clamp(.55rem,3vw,1rem)}
+  .intro{gap:2rem;padding-block:1.5rem 2.75rem}
+  .intro h2{font-size:clamp(4.25rem,21vw,6.25rem)}
+  .computer{width:100%;padding:.55rem .55rem 0;border-radius:.9rem}
+  .monitorLabel{gap:.75rem;padding:.1rem .2rem .55rem;font-size:.39rem}
+  .screen{min-height:23rem;border-width:.4rem;border-radius:.65rem}
+  .desktopIcons{top:.55rem;right:.35rem;left:.35rem;grid-template-columns:repeat(3,minmax(0,1fr));gap:.15rem}
+  .desktopIcons button{width:100%;height:5.7rem;min-width:0;padding:.35rem .1rem;font-size:.42rem}
+  .desktopIcon{width:2.35rem}
+  .systemShortcuts{display:none}
+  .appWindow{top:6.75rem;right:.45rem;bottom:3.15rem;left:.45rem;width:auto!important;height:auto!important;min-width:0;min-height:0;transform:none;box-shadow:3px 4px 0 rgba(17,17,17,.65)}
+  .appWindow[data-mode="maximized"]{inset:0 0 2.7rem!important}
+  .windowBar{min-width:0;padding-left:.4rem;font-size:.47rem}
+  .windowBar>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .windowActions{flex:0 0 auto}
+  .windowActions button{width:1.6rem;min-height:2rem}
+  .explorerMain{padding:.7rem}
+  .screenTitle{display:grid;grid-template-columns:1fr;gap:.65rem;align-items:start;padding-bottom:1rem}
+  .screenTitle h3{font-size:clamp(1.75rem,10vw,2.45rem)}
+  .screenTitle p{grid-column:1;max-width:28ch;font-size:.6rem}
+  .itemGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;padding-top:.85rem}
+  .itemGrid article{gap:.45rem;padding:.6rem .25rem}
+  .fileIcon{width:2.75rem;padding:.6rem}
+  .itemGrid strong{font-size:.66rem}
+  .itemGrid p{font-size:.44rem}
+  .taskbar{grid-template-columns:auto minmax(0,1fr) auto;min-height:2.7rem}
+  .startButton{min-width:3.3rem;padding:0 .65rem 0 .45rem}
+  .startButton span,.taskbar>.systemTray>span,.taskbar time{display:none}
+  .openApp{min-width:0;overflow:hidden;padding-inline:.55rem;text-overflow:ellipsis;white-space:nowrap}
+  .taskbar>.systemTray{padding-inline:.45rem}
+  .monitorControls{min-height:4.2rem}
+  .mobileExpand{display:inline-flex;min-height:2.75rem;align-items:center;justify-content:center;justify-self:end;padding:.65rem .85rem;border:1px solid #686862;border-radius:999px;background:#111;color:#b6ff00;font:800 .48rem/1 var(--font-geist-sans),sans-serif;letter-spacing:.08em}
+  .computer[data-expanded="true"]{position:fixed;inset:0;z-index:50;display:flex;width:100%;height:100dvh;max-width:none;padding:.55rem .55rem 0;border:0;border-radius:0;box-shadow:none}
+  .computer[data-expanded="true"] .monitorLabel{flex:0 0 auto}
+  .computer[data-expanded="true"] .screen{flex:1 1 auto;min-height:0;border-radius:.45rem}
+  .computer[data-expanded="true"] .monitorControls{flex:0 0 4rem;min-height:4rem}
+  .computer[data-expanded="true"] .appWindow{bottom:3.15rem}
+  .footer{align-items:end;padding-top:1.25rem;line-height:1.25}
+}
+
+@media (max-width:360px) {
+  .intro p{max-width:24ch}
+  .screen{min-height:23rem}
+  .desktopIcons button strong{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+}

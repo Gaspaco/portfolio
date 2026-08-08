@@ -26,7 +26,8 @@ export const projects: Project[] = [
     category: "Fitness App",
     year: "2025",
     src: "/screenshots/aria-screenshot.png",
-    images: ["/screenshots/aria-screenshot.png", "/pexels-agk42-2816903.jpg"],
+    caseHero: "/case-study/aria-hero-phone.png",
+    images: ["/screenshots/aria-screenshot.png", "/case-study/aria-editorial-phone.png"],
     liveUrl: "https://health-app-xi-five.vercel.app/",
     description: "A revolutionary approach to personal fitness tracking.",
     longDescription:
@@ -58,7 +59,7 @@ export const projects: Project[] = [
     year: "2026",
     src: "/project-melograph-red.png",
     caseHero: "/case-melograph-hero.png",
-    images: ["/project-melograph-red.png", "/project-melograph-live.png"],
+    images: ["/project-melograph-red.png", "/case-study/melograph-kendrick-studio.png"],
     liveUrl: "https://melographstudio.online/",
     description: "High-performance digital experiences and motion design.",
     longDescription:
@@ -89,7 +90,8 @@ export const projects: Project[] = [
     category: "Construction",
     year: "2026",
     src: "/dima-bouw.png",
-    images: ["/dima-bouw.png"],
+    caseHero: "/case-study/dimabouw-hero-construction.png",
+    images: ["/dima-bouw.png", "/case-study/dimabouw-villa-detail.png"],
     liveUrl: "https://www.dimabouw.site/",
     description: "A professional web presence for a construction company.",
     longDescription:
@@ -120,7 +122,8 @@ export const projects: Project[] = [
     category: "Creative Platform",
     year: "2026",
     src: "/melostudio.png",
-    images: ["/melostudio.png"],
+    caseHero: "/case-study/melostudio-hero-laptop.png",
+    images: ["/melostudio.png", "/case-study/melostudio-studio-daw.png"],
     liveUrl: "https://melostudio.nl/",
     description: "A creative platform for music production and collaboration.",
     longDescription:

@@ -32,10 +32,85 @@
   transform: translate(-50%, -50%);
 }
 
+.mobileStatement {
+  display: none;
+}
+
 @media (max-width: 700px) {
   .section {
-    height: 86svh;
-    min-height: 34rem;
+    display: grid;
+    height: auto;
+    min-height: 30rem;
+    place-items: center;
+    padding: 3rem 1rem;
+  }
+
+  .canvas {
+    display: none;
+  }
+
+  .fallback {
+    display: none;
+  }
+
+  .mobileStatement {
+    display: grid;
+    width: 100%;
+    max-width: 34rem;
+    padding: 1rem 0;
+    border: 0;
+    background: transparent;
+    color: var(--c-dark-5);
+    font-family: var(--font-caveat), cursive;
+    font-size: clamp(3rem, 14vw, 4.6rem);
+    font-weight: 600;
+    line-height: 0.76;
+    text-align: left;
+    cursor: pointer;
+    touch-action: manipulation;
+
+    > span {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      transition:
+        color 420ms ease,
+        transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    > span:nth-child(2),
+    > span:nth-child(4) {
+      justify-self: end;
+    }
+
+    small {
+      margin-top: 2.25rem;
+      font-family: var(--font-geist-sans), system-ui, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+    }
+
+    &[data-state="1"] {
+      > span:nth-child(1) { transform: translateX(8vw) rotate(-2deg); }
+      > span:nth-child(2) { color: #587d00; transform: translateX(-5vw) rotate(2deg); }
+      > span:nth-child(3) { transform: translateX(2vw); }
+      > span:nth-child(4) { transform: translateX(-8vw) rotate(-1deg); }
+      > span:nth-child(5) { color: #587d00; transform: translateX(10vw) rotate(1deg); }
+    }
+
+    &[data-state="2"] {
+      > span:nth-child(1) { transform: translateX(0) rotate(1deg); }
+      > span:nth-child(2) { color: var(--c-dark-5); transform: translateX(-12vw) rotate(-1deg); }
+      > span:nth-child(3) { color: #587d00; transform: translateX(9vw) rotate(2deg); }
+      > span:nth-child(4) { transform: translateX(-2vw); }
+      > span:nth-child(5) { transform: translateX(4vw) rotate(-2deg); }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--c-dark-5);
+      outline-offset: 0.5rem;
+    }
   }
 
 }
@@ -47,5 +122,15 @@
 
   .fallback {
     display: block;
+  }
+
+  .mobileStatement > span {
+    transition: none;
+  }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .fallback {
+    display: none;
   }
 }

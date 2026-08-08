@@ -66,6 +66,7 @@ export default function CraftBuild() {
   const [isPowered, setIsPowered] = useState(true);
   const [isBooting, setIsBooting] = useState(false);
   const [desktopDialog, setDesktopDialog] = useState<DesktopDialog>(null);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
 
   const togglePower = () => {
     if (isPowered) {
@@ -82,6 +83,20 @@ export default function CraftBuild() {
     const timer = window.setTimeout(() => setIsBooting(false), 1350);
     return () => window.clearTimeout(timer);
   }, [isBooting]);
+
+  useEffect(() => {
+    if (!isMobileExpanded) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMobileExpanded(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isMobileExpanded]);
 
   const selectPanel = (next: Panel) => {
     setPanel(next);
@@ -203,7 +218,7 @@ export default function CraftBuild() {
         <p>The languages, tools, and technology I use to turn an interface into something real.</p>
       </div>
 
-      <div className={s.computer} data-reveal>
+      <div className={s.computer} data-reveal data-expanded={isMobileExpanded}>
         <div className={s.monitorLabel}><span>NIKO PERSONAL COMPUTER</span><span>MODEL ND-07</span></div>
 
         <div ref={screenRef} className={s.screen} data-powered={isPowered}>
@@ -280,6 +295,14 @@ export default function CraftBuild() {
             <span aria-hidden="true" /><b>{isPowered ? "ON" : "OFF"}</b>
           </button>
           <div className={s.driveSlot}><span>{screen.label} DISK LOADED</span></div>
+          <button
+            type="button"
+            className={s.mobileExpand}
+            aria-expanded={isMobileExpanded}
+            onClick={() => setIsMobileExpanded((expanded) => !expanded)}
+          >
+            {isMobileExpanded ? "EXIT" : "EXPAND"}
+          </button>
         </div>
       </div>
 
