@@ -83,13 +83,10 @@ export default function Footer() {
                     <span className={s.socialsLabel}>Socials</span>
                     <div className={s.socialsLinks}>
                         <Magnetic>
-                            <a href="https://www.instagram.com/nik0d_/" target="_blank" className={s.socialLink}>Instagram</a>
+                            <a href="https://www.instagram.com/nik0d_/" target="_blank" rel="noreferrer" className={s.socialLink}>Instagram</a>
                         </Magnetic>
                         <Magnetic>
-                            <a href="#" className={s.socialLink}>Twitter</a>
-                        </Magnetic>
-                        <Magnetic>
-                            <a href="https://www.linkedin.com/in/niko-dima-64246b33a/" target="_blank" className={s.socialLink}>LinkedIn</a>
+                            <a href="https://www.linkedin.com/in/niko-dima-64246b33a/" target="_blank" rel="noreferrer" className={s.socialLink}>LinkedIn</a>
                         </Magnetic>
                     </div>
                 </div>
