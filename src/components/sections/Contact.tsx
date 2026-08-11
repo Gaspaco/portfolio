@@ -6,6 +6,7 @@ import gsap from "gsap";
 import s from "./Contact.module.scss";
 
 const EMAIL = "nikodima2007@gmail.com";
+const MAILTO = `mailto:${EMAIL}?subject=${encodeURIComponent("Portfolio project enquiry")}`;
 
 function PixelArrow() {
   return (
@@ -64,7 +65,13 @@ export default function Contact() {
 
   return (
     <section ref={sectionRef} id="contact" className={s.section}>
-      <a href={`mailto:${EMAIL}`} className={s.atSymbol} aria-label={`Email ${EMAIL}`}>
+      <a
+        href={MAILTO}
+        className={s.atSymbol}
+        aria-label={`Let's talk — email ${EMAIL}`}
+        title={`Email ${EMAIL}`}
+        data-sound="longclick"
+      >
         <svg className={s.atOrbit} viewBox="0 0 200 200">
           <defs>
             <path id="contact-circle-path" d="M100,100 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0" />
@@ -87,7 +94,13 @@ export default function Contact() {
           <p>Tell me what you are building, what feels stuck, or what you want people to remember.</p>
         </div>
         <div className={s.emailRow}>
-          <a href={`mailto:${EMAIL}`} className={s.emailLink} data-sound="longclick">
+          <a
+            href={MAILTO}
+            className={s.emailLink}
+            aria-label={`Email ${EMAIL}`}
+            title={`Email ${EMAIL}`}
+            data-sound="longclick"
+          >
             <span className={s.emailText} aria-label={EMAIL}>
               {Array.from(EMAIL).map((character, index) => (
                 <span
