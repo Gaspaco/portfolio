@@ -18,6 +18,11 @@
   > section:nth-of-type(6) {
     margin-top: 0;
   }
+
+  > section:nth-of-type(n + 3) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 980px;
+  }
 }
 
 @media (max-width: 680px) {

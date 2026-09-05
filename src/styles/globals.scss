@@ -2,6 +2,49 @@
 @use 'reset';
 @use 'animations';
 
+:root {
+  --c-brand: #8c1921;
+  --c-accent: #fbbf24;
+  --c-accent-red: #ff4d4d;
+  --accent-primary: #fbbf24;
+  --accent-secondary: #fbbf24;
+  --c-dark-1: #050505;
+  --c-dark-2: #0a0a0a;
+  --c-dark-3: #0c0c0c;
+  --c-dark-4: #080808;
+  --c-dark-5: #111;
+  --c-crimson-dark: #2a0507;
+  --c-crimson-text: #500a0e;
+  --c-brand-dark: #f5f0e6;
+  --c-white: #fff;
+  --c-black: #000;
+  --c-text: #171717;
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-caveat), cursive;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --z-base: 0;
+  --z-content: 10;
+  --z-above: 20;
+  --z-section: 30;
+  --z-float: 60;
+  --z-nav: 60;
+  --z-grain: 9998;
+  --z-cursor: 9999;
+  --z-curtain-2: 9998;
+  --z-curtain-1: 9999;
+  --z-menu: 99999;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.76, 0, 0.24, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 700ms;
+  --space-section: clamp(4rem, 8vw, 8rem);
+}
+
 // ─── Base ───
 html {
   overflow-x: hidden;

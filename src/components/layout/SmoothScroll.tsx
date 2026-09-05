@@ -3,6 +3,12 @@
 import { ReactNode, useEffect } from "react";
 import Lenis from "lenis";
 
+declare global {
+  interface Window {
+    lenis?: { start: () => void; stop: () => void };
+  }
+}
+
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if device is touch-enabled
@@ -25,14 +31,11 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       autoRaf: true,
     });
 
-    // Expose lenis instance to window for global access if needed
-    // @ts-ignore
     window.lenis = lenis;
 
     return () => {
       lenis.destroy();
-      // @ts-ignore
-      window.lenis = null;
+      window.lenis = undefined;
     };
   }, []);
 

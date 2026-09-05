@@ -29,78 +29,50 @@ const MENU_SOUND_KEYS = new Set<MenuSoundKey>([
   "aboutlink",
 ]);
 
-function makeWavDataUri(samples: Int16Array, sampleRate = 44100) {
-  const headerSize = 44;
-  const buffer = new ArrayBuffer(headerSize + samples.length * 2);
-  const view = new DataView(buffer);
+function createSound(src: string, volume: number, loop = false): PlayableSound {
+  let audio: HTMLAudioElement | null = null;
+  let fadeFrame = 0;
 
-  const writeString = (offset: number, value: string) => {
-    for (let i = 0; i < value.length; i += 1) {
-      view.setUint8(offset + i, value.charCodeAt(i));
+  const getAudio = () => {
+    if (!audio) {
+      audio = new Audio(src);
+      audio.preload = "none";
+      audio.volume = volume;
+      audio.loop = loop;
     }
+
+    return audio;
   };
 
-  writeString(0, "RIFF");
-  view.setUint32(4, 36 + samples.length * 2, true);
-  writeString(8, "WAVE");
-  writeString(12, "fmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  writeString(36, "data");
-  view.setUint32(40, samples.length * 2, true);
+  return {
+    play: () => {
+      const element = getAudio();
+      window.cancelAnimationFrame(fadeFrame);
+      element.currentTime = 0;
+      element.volume = volume;
+      void element.play().catch(() => undefined);
+      return 0;
+    },
+    stop: () => {
+      if (!audio) return;
+      window.cancelAnimationFrame(fadeFrame);
+      audio.pause();
+      audio.currentTime = 0;
+    },
+    fade: (from, to, duration) => {
+      const element = getAudio();
+      const start = performance.now();
+      element.volume = from;
 
-  samples.forEach((sample, index) => {
-    view.setInt16(headerSize + index * 2, sample, true);
-  });
+      const tick = (time: number) => {
+        const progress = Math.min(1, (time - start) / duration);
+        element.volume = from + (to - from) * progress;
+        if (progress < 1) fadeFrame = window.requestAnimationFrame(tick);
+      };
 
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-
-  return `data:audio/wav;base64,${window.btoa(binary)}`;
-}
-
-function makeMenuTickDataUri(kind: "hover" | "click") {
-  const sampleRate = 44100;
-  const durationSeconds = kind === "hover" ? 0.035 : 0.075;
-  const sampleCount = Math.floor(sampleRate * durationSeconds);
-  const samples = new Int16Array(sampleCount);
-  const gain = kind === "hover" ? 0.065 : 0.11;
-  const baseFrequency = kind === "hover" ? 980 : 420;
-  let noiseState = 0.17;
-  let lowpass = 0;
-  let bandpass = 0;
-
-  const random = () => {
-    noiseState = (noiseState * 16807) % 2147483647;
-    return noiseState / 2147483647 - 0.5;
+      fadeFrame = window.requestAnimationFrame(tick);
+    },
   };
-
-  for (let i = 0; i < sampleCount; i += 1) {
-    const t = i / sampleRate;
-    const progress = i / sampleCount;
-    const transient = Math.exp(-progress * (kind === "hover" ? 18 : 10));
-    const body = Math.exp(-progress * (kind === "hover" ? 40 : 18));
-    const noise = random();
-    lowpass += (noise - lowpass) * 0.18;
-    bandpass += (lowpass - bandpass) * 0.5;
-
-    const pitchDrop = baseFrequency * (1 - progress * (kind === "hover" ? 0.1 : 0.32));
-    const tone = Math.sin(2 * Math.PI * pitchDrop * t) * body;
-    const texture = (bandpass - lowpass * 0.35) * transient;
-    const sample = Math.max(-1, Math.min(1, (texture * 0.75 + tone * 0.35) * gain));
-    samples[i] = sample * 0x7fff;
-  }
-
-  return makeWavDataUri(samples, sampleRate);
 }
 
 function getSoundTarget(target: EventTarget | null) {
@@ -137,51 +109,18 @@ export default function SoundEffects() {
       if (soundsRef.current) return soundsRef.current;
       if (loadingRef.current) return loadingRef.current;
 
-      loadingRef.current = import("howler").then(({ Howl }) => {
+      loadingRef.current = Promise.resolve().then(() => {
         const bank: SoundBank = {
           effects: {
-            click: new Howl({
-              src: [`${AUDIO_BASE_URL}/click.wav`, makeMenuTickDataUri("click")],
-              volume: 1,
-              preload: true,
-            }),
-            close: new Howl({
-              src: [`${AUDIO_BASE_URL}/close.wav`],
-              volume: 0.95,
-              preload: true,
-            }),
-            switch: new Howl({
-              src: [`${AUDIO_BASE_URL}/switch.wav`],
-              volume: 0.95,
-              preload: true,
-            }),
-            longclick: new Howl({
-              src: [`${AUDIO_BASE_URL}/longclick.wav`],
-              volume: 0.9,
-              preload: true,
-            }),
-            tick: new Howl({
-              src: [`${AUDIO_BASE_URL}/tick.wav`],
-              volume: 0.82,
-              preload: true,
-            }),
-            homelink: new Howl({
-              src: [`${AUDIO_BASE_URL}/menu/homelink.wav`],
-              volume: 0.9,
-              preload: true,
-            }),
-            aboutlink: new Howl({
-              src: [`${AUDIO_BASE_URL}/menu/aboutlink.wav`],
-              volume: 0.9,
-              preload: true,
-            }),
+            click: createSound(`${AUDIO_BASE_URL}/click.wav`, 1),
+            close: createSound(`${AUDIO_BASE_URL}/close.wav`, 0.95),
+            switch: createSound(`${AUDIO_BASE_URL}/switch.wav`, 0.95),
+            longclick: createSound(`${AUDIO_BASE_URL}/longclick.wav`, 0.9),
+            tick: createSound(`${AUDIO_BASE_URL}/tick.wav`, 0.82),
+            homelink: createSound(`${AUDIO_BASE_URL}/menu/homelink.wav`, 0.9),
+            aboutlink: createSound(`${AUDIO_BASE_URL}/menu/aboutlink.wav`, 0.9),
           },
-          ambient: new Howl({
-            src: [`${AUDIO_BASE_URL}/ambient.mp3`],
-            volume: 0,
-            loop: true,
-            preload: true,
-          }),
+          ambient: createSound(`${AUDIO_BASE_URL}/ambient.mp3`, 0.52, true),
         };
 
         soundsRef.current = bank;
@@ -210,7 +149,7 @@ export default function SoundEffects() {
       sounds.ambient.fade?.(0, 0.52, 1600, id);
     };
 
-    const setMuted = (muted: boolean) => {
+    const setMuted = (muted: boolean, startWhenUnmuted = true) => {
       mutedRef.current = muted;
       window.localStorage.setItem("sound-muted", muted ? "1" : "0");
       window.dispatchEvent(new CustomEvent("sound-muted-change", { detail: { muted } }));
@@ -218,7 +157,7 @@ export default function SoundEffects() {
       if (muted) {
         soundsRef.current?.ambient.stop();
         ambientStartedRef.current = false;
-      } else {
+      } else if (startWhenUnmuted) {
         void startAmbient();
       }
     };
@@ -246,7 +185,8 @@ export default function SoundEffects() {
     };
 
     const storedMuted = window.localStorage.getItem("sound-muted") === "1";
-    setMuted(storedMuted);
+    mutedRef.current = storedMuted;
+    window.dispatchEvent(new CustomEvent("sound-muted-change", { detail: { muted: storedMuted } }));
 
     document.addEventListener("click", handleClick, true);
     document.addEventListener("pointerdown", handleFirstInteraction, true);

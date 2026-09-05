@@ -41,7 +41,7 @@ export default function IntroStatement() {
     let activated = reducedMotion;
     let visible = false;
     let lastFrame = 0;
-    const frameInterval = 1000 / 60;
+    const frameInterval = 1000 / 30;
 
     const stopRendering = () => {
       cancelAnimationFrame(frame);
@@ -57,7 +57,7 @@ export default function IntroStatement() {
       const rect = section.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      dpr = Math.min(window.devicePixelRatio || 1, 1);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
@@ -98,7 +98,7 @@ export default function IntroStatement() {
       });
 
       const image = sampleContext.getImageData(0, 0, sample.width, sample.height);
-      const gap = width < 700 ? 6 : 7;
+      const gap = width < 900 ? 8 : 9;
       const next: Particle[] = [];
 
       for (let y = 0; y < sample.height; y += gap) {

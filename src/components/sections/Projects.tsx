@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PREVIEWS: Partial<Record<string, string>> = {
   aria: "/project-aria-new.jpg",
-  melograph: "/project-melograph-red.png",
+  melograph: "/project-melograph-preview.jpg",
 };
 const FOOTER_TEXT = "More experiments are always in progress.";
 

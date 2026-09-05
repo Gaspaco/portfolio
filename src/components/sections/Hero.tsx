@@ -5,8 +5,21 @@ import gsap from "gsap";
 import s from "./Hero.module.scss";
 
 const CHARS = "$@B%8&WM#ZO0QCJYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-const CELL_SIZE = 9;
-const FRAME_INTERVAL = 1000 / 24;
+const CELL_SIZE = 12;
+const FRAME_INTERVAL = 1000 / 12;
+
+function shouldUseLiveCameraEffect() {
+  const connection = navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  };
+
+  return !(
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia("(max-width: 700px)").matches ||
+    connection.connection?.saveData ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+  );
+}
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -79,7 +92,7 @@ export default function Hero() {
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1);
       canvas.width = Math.max(1, Math.floor(rect.width * dpr));
       canvas.height = Math.max(1, Math.floor(rect.height * dpr));
     };
@@ -107,7 +120,7 @@ export default function Hero() {
       lastFrame = time;
 
       const { width, height } = canvas;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1);
       const cols = Math.max(1, Math.floor(width / (CELL_SIZE * dpr)));
       const rows = Math.max(1, Math.floor(height / (CELL_SIZE * dpr)));
       const cellW = width / cols;
@@ -174,6 +187,16 @@ export default function Hero() {
 
     resize();
     window.addEventListener("resize", resize);
+
+    if (!shouldUseLiveCameraEffect()) {
+      drawFallback("live camera paused");
+      return () => {
+        disposed = true;
+        stopDrawing();
+        window.removeEventListener("resize", resize);
+      };
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         visible = entry.isIntersecting;
@@ -271,7 +294,6 @@ export default function Hero() {
       <div className={s.mediaShell}>
         <div ref={imageRef} className={s.imageContainer}>
           <div className={s.effectFrame} aria-label={cameraFailed ? "Camera unavailable" : "Live camera ascii effect"}>
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video ref={videoRef} className={s.hiddenVideo} playsInline muted autoPlay />
             <canvas ref={canvasRef} className={s.effectCanvas} />
             <div className={s.effectGrain} aria-hidden="true" />

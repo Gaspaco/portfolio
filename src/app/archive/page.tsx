@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const previews: Partial<Record<string, string>> = {
   aria: "/project-aria-new.jpg",
-  melograph: "/project-melograph-red.png",
+  melograph: "/project-melograph-preview.jpg",
 };
 
 const palettes = [s.aria, s.melograph, s.museum];
